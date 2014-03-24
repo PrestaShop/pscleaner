@@ -34,7 +34,7 @@ class PSCleaner extends Module
 	{
 		$this->name = 'pscleaner';
 		$this->tab = 'administration';
-		$this->version = '1.5';
+		$this->version = '1.6';
 		$this->author = 'PrestaShop';
 		$this->need_instance = 0;
 		if (version_compare(_PS_VERSION_, '1.5.0.0 ', '>='))
@@ -45,6 +45,7 @@ class PSCleaner extends Module
 
 		$this->displayName = $this->l('PrestaShop Cleaner');
 		$this->description = $this->l('Check and fix functional integrity constraints and remove default data');
+		$this->ps_versions_compliancy = array('min' => '1.5.6.1', 'max' => _PS_VERSION_);
 		$this->secure_key = Tools::encrypt($this->name);
 	}
 	
