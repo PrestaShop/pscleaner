@@ -34,7 +34,7 @@ class PSCleaner extends Module
 	{
 		$this->name = 'pscleaner';
 		$this->tab = 'administration';
-		$this->version = '1.6';
+		$this->version = '1.7';
 		$this->author = 'PrestaShop';
 		$this->need_instance = 0;
 		if (version_compare(_PS_VERSION_, '1.5.0.0 ', '>='))
@@ -57,10 +57,13 @@ class PSCleaner extends Module
 		{
 			$shops = Shop::getShops(false, null, true);
 			$id_lang = (int) $this->context->language->id;
-			$resultsArray = array();
+			$results = array();
+			array_push($results, Configuration::get($key));
+
 			foreach ($shops as $id_shop)
-				$resultsArray[$id_shop] = Configuration::get($key, $id_lang, null, $id_shop);
-			return $resultsArray;
+				array_push($results, Configuration::get($key, $id_lang, null, $id_shop));
+
+			return $results;
 		}
 	}
 
