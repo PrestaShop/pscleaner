@@ -88,7 +88,7 @@ class PSCleaner extends Module
 			$logs = self::cleanAndOptimize();
 			if (count($logs))
 			{
-				$conf = $this->l('The following queries successfuly cleaned your database').'<br /><ul>';
+				$conf = $this->l('The following queries successfuly cleaned your database:').'<br /><ul>';
 				foreach ($logs as $query => $entries)
 					$conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.sprintf($this->l('%d line(s)'), $entries).'</li>';
 				$conf .= '</ul>';
