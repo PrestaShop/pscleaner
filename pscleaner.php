@@ -34,7 +34,7 @@ class PSCleaner extends Module
 	{
 		$this->name = 'pscleaner';
 		$this->tab = 'administration';
-		$this->version = '1.8';
+		$this->version = '1.8.1';
 		$this->author = 'PrestaShop';
 		$this->need_instance = 0;
 		if (version_compare(_PS_VERSION_, '1.5.0.0 ', '>='))
@@ -88,7 +88,7 @@ class PSCleaner extends Module
 			$logs = self::cleanAndOptimize();
 			if (count($logs))
 			{
-				$conf = $this->l('The following queries successfuly cleaned your database').'<br /><ul>';
+				$conf = $this->l('The following queries successfuly cleaned your database:').'<br /><ul>';
 				foreach ($logs as $query => $entries)
 					$conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.sprintf($this->l('%d line(s)'), $entries).'</li>';
 				$conf .= '</ul>';
@@ -233,8 +233,8 @@ class PSCleaner extends Module
 			array('feature_value', 'id_feature', 'feature', 'id_feature'),
 			array('group_reduction', 'id_group', 'group', 'id_group'),
 			array('group_reduction', 'id_category', 'category', 'id_category'),
-			array('homeslider', 'id_shop', 'shop', 'id_shop'),
-			array('homeslider', 'id_homeslider_slides', 'homeslider_slides', 'id_homeslider_slides'),
+			array('homeslider', 'id_shop', 'shop', 'id_shop', 'homeslider'),
+			array('homeslider', 'id_homeslider_slides', 'homeslider_slides', 'id_homeslider_slides', 'homeslider'),
 			array('hook_module', 'id_hook', 'hook', 'id_hook'),
 			array('hook_module', 'id_module', 'module', 'id_module'),
 			array('hook_module_exceptions', 'id_hook', 'hook', 'id_hook'),

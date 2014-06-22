@@ -1,0 +1,6 @@
+2014-04-17 11:25:39 +0200	[-] MO : pscleaner - Fix 1.5 ps_version_compliancy issue
+2014-04-09 17:21:40 +0200	// Add version to config.xml
+2014-04-04 14:28:26 +0200	[MO] Fix error when homeslider isn't installed
+2014-03-31 19:12:05 +0200	[-] MO : pscleaner - FixBug #PSCFV-11805 - Delete home and root categories on 1.5
+2014-03-24 18:26:42 +0100	/ MO pscleaner : ps_versions_compliancy added
+2014-03-21 10:55:18 +0100	Initial commit
