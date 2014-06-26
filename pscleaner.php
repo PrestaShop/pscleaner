@@ -558,14 +558,26 @@ class PSCleaner extends Module
 		}
 		self::clearAllCaches();
 	}
-	
-	// Not called yet
+
 	public static function cleanAndOptimize()
 	{
 		$logs = array();
+
 		$query = '
 		DELETE FROM `'._DB_PREFIX_.'cart`
 		WHERE id_cart NOT IN (SELECT id_cart FROM `'._DB_PREFIX_.'orders`)
+		AND date_add < "'.pSQL(date('Y-m-d', strtotime('-1 month'))).'"';
+		if (Db::getInstance()->Execute($query))
+			if ($affected_rows = Db::getInstance()->Affected_Rows())
+				$logs[$query] = $affected_rows;
+				
+		$query = '
+		DELETE FROM `'._DB_PREFIX_.'cart_rule`
+		WHERE (
+			active = 0
+			OR quantity = 0
+			OR date_to < "'.pSQL(date('Y-m-d')).'"
+		)
 		AND date_add < "'.pSQL(date('Y-m-d', strtotime('-1 month'))).'"';
 		if (Db::getInstance()->Execute($query))
 			if ($affected_rows = Db::getInstance()->Affected_Rows())
