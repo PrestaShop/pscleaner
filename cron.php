@@ -3,7 +3,7 @@
 include(dirname(__FILE__).'/../../config/config.inc.php');
 include(dirname(__FILE__).'/pscleaner.php');
 
-if (!Module::isInstalled('blocklayered')) {
+if (!Module::isInstalled('pscleaner')) {
     die('Bad token');
 }
 
