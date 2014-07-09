@@ -86,6 +86,11 @@ class PSCleaner extends Module
 		}
 		elseif (Tools::isSubmit('submitCleanAndOptimize'))
 		{
+			Configuration::updateValue('PS_CLEANER_CARTCLEANING', Tools::getValue('cartcleaning'));
+                        Configuration::updateValue('PS_CLEANER_CARTCLEANING_MONTH', Tools::getValue('cartmonth'));
+                        Configuration::updateValue('PS_CLEANER_CONNCLEANING', Tools::getValue('conncleaning'));
+                        Configuration::updateValue('PS_CLEANER_CONNCLEANING_MONTH', Tools::getValue('connmonth'));
+                    
 			$logs = self::cleanAndOptimize();
 			if (count($logs))
 			{
@@ -564,13 +569,44 @@ class PSCleaner extends Module
 	public static function cleanAndOptimize()
 	{
 		$logs = array();
-		$query = '
-		DELETE FROM `'._DB_PREFIX_.'cart`
-		WHERE id_cart NOT IN (SELECT id_cart FROM `'._DB_PREFIX_.'orders`)
-		AND date_add < "'.pSQL(date('Y-m-d', strtotime('-1 month'))).'"';
-		if (Db::getInstance()->Execute($query))
-			if ($affected_rows = Db::getInstance()->Affected_Rows())
-				$logs[$query] = $affected_rows;
+		if ((int)Configuration::get('PS_CLEANER_CARTCLEANING')===1) {
+                    $months = (int)Configuration::get('PS_CLEANER_CARTCLEANING_MONTH');
+                    if ($months===0)
+                        $months = 1;
+                    $query = '
+                    DELETE FROM `'._DB_PREFIX_.'cart`
+                    WHERE id_cart NOT IN (SELECT id_cart FROM `'._DB_PREFIX_.'orders`)
+                    AND date_add < "'.pSQL(date('Y-m-d', strtotime('-'.$months.' month'))).'"';
+                    if (Db::getInstance()->Execute($query))
+                            if ($affected_rows = Db::getInstance()->Affected_Rows())
+                                    $logs[$query] = $affected_rows;
+                }
+                
+                if ((int)Configuration::get('PS_CLEANER_CONNCLEANING')===1) {
+                    $months = (int)Configuration::get('PS_CLEANER_CONNCLEANING_MONTH');
+                    if ($months===0)
+                        $months = 1;
+                    $query = '
+                    DELETE FROM `'._DB_PREFIX_.'connections`
+                    WHERE date_add < "'.pSQL(date('Y-m-d', strtotime('-'.$months.' month'))).'"';
+                    if (Db::getInstance()->Execute($query))
+                            if ($affected_rows = Db::getInstance()->Affected_Rows())
+                                    $logs[$query] = $affected_rows;
+                            
+                    $query = '
+                    DELETE FROM `'._DB_PREFIX_.'connections_page`
+                    WHERE time_end < "'.pSQL(date('Y-m-d', strtotime('-'.$months.' month'))).'"';
+                    if (Db::getInstance()->Execute($query))
+                            if ($affected_rows = Db::getInstance()->Affected_Rows())
+                                    $logs[$query] = $affected_rows;
+                            
+                    $query = '
+                    DELETE FROM `'._DB_PREFIX_.'connections_source`
+                    WHERE date_add < "'.pSQL(date('Y-m-d', strtotime('-'.$months.' month'))).'"';
+                    if (Db::getInstance()->Execute($query))
+                            if ($affected_rows = Db::getInstance()->Affected_Rows())
+                                    $logs[$query] = $affected_rows;
+                }
 
 		$parents = Db::getInstance()->ExecuteS('SELECT DISTINCT id_parent FROM '._DB_PREFIX_.'tab');
 		foreach ($parents as $parent)
@@ -708,6 +744,59 @@ class PSCleaner extends Module
 					'title' => $this->l('Database cleaning'),
 					'icon' => 'icon-cogs'
 				),
+				'description' => $this->l('You can add a cron task to do this on a regular basis : ').$this->getBaseLink()._MODULE_DIR_.'pscleaner/cron.php?secure_key='.Tools::encrypt(_COOKIE_KEY_.$this->secure_key),
+				'input' => array(
+					array(
+						'type' => 'switch',
+						'is_bool' => true,
+						'label' => $this->l('Activate cart cleaning'),
+						'name' => 'cartcleaning',
+						'values' => array(
+							array(
+								'id' => 'cartcleaning_on',
+								'value' => 1,
+								'label' => $this->l('Enabled')
+							),
+							array(
+								'id' => 'cartcleaning_off',
+								'value' => 0,
+								'label' => $this->l('Disabled')
+							)
+						)
+					),
+					array(
+						'type' => 'text',
+						'label' => $this->l('Carts older than'),
+						'name' => 'cartmonth',
+						'suffix' => $this->l('months')
+					),
+					array(
+						'type' => 'switch',
+						'is_bool' => true,
+						'label' => $this->l('Activate connexion cleaning'),
+						'name' => 'conncleaning',
+                                                'desc' => array($this->l('Warning!! Older connections & referer stats won\'t be available anymore')),
+						'values' => array(
+							array(
+								'id' => 'conncleaning_on',
+								'value' => 1,
+								'label' => $this->l('Enabled')
+							),
+							array(
+								'id' => 'conncleaning_off',
+								'value' => 0,
+								'label' => $this->l('Disabled')
+							)
+						)
+					),
+					array(
+						'type' => 'text',
+						'label' => $this->l('Connections older than'),
+						'name' => 'connmonth',
+						'suffix' => $this->l('months')
+					)
+				),
+                            
 				'submit' => array(
 					'title' => $this->l('Clean & Optimize'),
 					'class' => 'btn btn-default pull-right',
@@ -740,6 +829,34 @@ class PSCleaner extends Module
 	
 	public function getConfigFieldsValues()
 	{
-		return array('checkTruncateSales' => 0, 'checkTruncateCatalog' => 0);
+		return array(
+                    'checkTruncateSales' => 0, 
+                    'checkTruncateCatalog' => 0, 
+                    'cartcleaning'=>  Configuration::get('PS_CLEANER_CARTCLEANING'), 
+                    'cartmonth'=>  Configuration::get('PS_CLEANER_CARTCLEANING_MONTH'), 
+                    'conncleaning'=>  Configuration::get('PS_CLEANER_CONNCLEANING'), 
+                    'connmonth'=>  Configuration::get('PS_CLEANER_CONNCLEANING_MONTH')
+                );
+	}
+        
+        protected function getBaseLink($id_shop = null, $ssl = null)
+	{
+		static $force_ssl = null;
+		
+		if ($ssl === null)
+		{
+			if ($force_ssl === null)
+				$force_ssl = (Configuration::get('PS_SSL_ENABLED') && Configuration::get('PS_SSL_ENABLED_EVERYWHERE'));
+			$ssl = $force_ssl;
+		}
+
+		if (Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE') && $id_shop !== null)
+			$shop = new Shop($id_shop);
+		else
+			$shop = Context::getContext()->shop;
+
+		$base = (($ssl && $this->ssl_enable) ? 'https://'.$shop->domain_ssl : 'http://'.$shop->domain);
+
+		return $base;
 	}
 }
