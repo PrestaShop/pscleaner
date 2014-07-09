@@ -30,6 +30,7 @@ if (!defined('_CAN_LOAD_FILES_'))
 
 class PSCleaner extends Module
 {
+	public $secure_key;
 	public function __construct()
 	{
 		$this->name = 'pscleaner';
