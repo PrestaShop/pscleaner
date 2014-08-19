@@ -200,9 +200,9 @@ class PSCleaner extends Module
 			array('category_product', 'id_category', 'category', 'id_category'),
 			array('category_product', 'id_product', 'product', 'id_product'),
 			array('cms', 'id_cms_category', 'cms_category', 'id_cms_category'),
-			array('cms_block', 'id_cms_category', 'cms_category', 'id_cms_category'),
-			array('cms_block_page', 'id_cms', 'cms', 'id_cms'),
-			array('cms_block_page', 'id_cms_block', 'cms_block', 'id_cms_block'),
+			array('cms_block', 'id_cms_category', 'cms_category', 'id_cms_category', 'blockcms'),
+			array('cms_block_page', 'id_cms', 'cms', 'id_cms', 'blockcms'),
+			array('cms_block_page', 'id_cms_block', 'cms_block', 'id_cms_block', 'blockcms'),
 			array('compare', 'id_customer', 'customer', 'id_customer'),
 			array('compare_product', 'id_compare', 'compare', 'id_compare'),
 			array('compare_product', 'id_product', 'product', 'id_product'),
@@ -403,9 +403,9 @@ class PSCleaner extends Module
 			case 'catalog':
 				$id_home = $this->getMultiShopValues('PS_HOME_CATEGORY');
 				$id_root = $this->getMultiShopValues('PS_ROOT_CATEGORY');
-				$db->execute('DELETE FROM `'._DB_PREFIX_.'category` WHERE id_category NOT IN ('.implode(array_map('intval', $id_home), ',').', '.implode(array_map('intval',$id_root), ',').')');
-				$db->execute('DELETE FROM `'._DB_PREFIX_.'category_lang` WHERE id_category NOT IN ('.implode(array_map('intval', $id_home), ',').', '.implode(array_map('intval',$id_root), ',').')');
-				$db->execute('DELETE FROM `'._DB_PREFIX_.'category_shop` WHERE id_category NOT IN ('.implode(array_map('intval', $id_home), ',').', '.implode(array_map('intval',$id_root), ',').')');
+				$db->execute('DELETE FROM `'._DB_PREFIX_.'category` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
+				$db->execute('DELETE FROM `'._DB_PREFIX_.'category_lang` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
+				$db->execute('DELETE FROM `'._DB_PREFIX_.'category_shop` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
 				foreach (scandir(_PS_CAT_IMG_DIR_) as $dir)
 					if (preg_match('/^[0-9]+(\-(.*))?\.jpg$/', $dir))
 						unlink(_PS_CAT_IMG_DIR_.$dir);
