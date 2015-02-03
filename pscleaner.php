@@ -488,6 +488,7 @@ class PSCleaner extends Module
 					'stock',
 					'stock_available',
 					'stock_mvt',
+					'warehouse',
 				);
 				foreach ($tables as $table)
 					$db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
