@@ -529,6 +529,8 @@ class PSCleaner extends Module
 					'order_invoice',
 					'order_invoice_payment',
 					'order_invoice_tax',
+					'order_message',
+					'order_message_lang',
 					'order_payment',
 					'order_return',
 					'order_return_detail',
