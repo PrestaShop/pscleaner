@@ -545,7 +545,8 @@ class PSCleaner extends Module
 
 				$modules_tables = array(
 					'sekeywords' => array('sekeyword'),
-					'pagesnotfound' => array('pagenotfound')
+					'pagesnotfound' => array('pagenotfound'),
+					'paypal' => array('paypal_customer', 'paypal_order')
 				);
 
 				foreach ($modules_tables as $name => $module_tables)
