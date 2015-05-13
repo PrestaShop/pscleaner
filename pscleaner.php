@@ -543,15 +543,12 @@ class PSCleaner extends Module
 					'referrer_cache',
 				);
 
-				$modules_tables = array(
-					'sekeywords' => array('sekeyword'),
-					'pagesnotfound' => array('pagenotfound'),
-					'paypal' => array('paypal_customer', 'paypal_order')
-				);
+				$modules_tables = Hook::exec('actionPSCleanerGetModulesTables', array('truncate' => 'sales'), null, true);
 
-				foreach ($modules_tables as $name => $module_tables)
-					if (Module::isInstalled($name))
-						$tables = array_merge($tables, $module_tables);
+				if (is_array($modules_tables) && count($modules_tables))
+					foreach ($modules_tables as $name => $module_tables)
+						if (Module::isInstalled($name))
+							$tables = array_merge($tables, $module_tables);
 
 				foreach ($tables as $table)
 					$db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
