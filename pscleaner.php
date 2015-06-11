@@ -412,6 +412,7 @@ class PSCleaner extends Module
 				$tables = array(
 					'product',
 					'product_shop',
+					'category_group',
 					'feature_product',
 					'product_lang',
 					'category_product',
