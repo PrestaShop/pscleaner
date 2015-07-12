@@ -86,29 +86,25 @@ class PSCleaner extends Module
 		elseif (Tools::isSubmit('submitCleanAndOptimize'))
 		{
 			$logs = self::cleanAndOptimize();
-			if (count($logs))
-			{
-				$conf = $this->l('The following queries successfuly cleaned your database:').'<br /><ul>';
-				foreach ($logs as $query => $entries)
-					$conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.sprintf($this->l('%d line(s)'), $entries).'</li>';
-				$conf .= '</ul>';
-			}
-			else
-				$conf = $this->l('Nothing that need to be cleaned');
-			$html .= $this->displayConfirmation($conf);
+			$html .= $this->displayConfirmation($this->showLogs($logs));
 		}
 		elseif (Tools::getValue('submitTruncateCatalog') && Tools::getValue('checkTruncateCatalog'))
 		{
-			self::truncate('catalog');
-			$html .= $this->displayConfirmation($this->l('Catalog truncated'));
+			$logs = self::truncate('catalog');
+			$html .= $this->displayConfirmation($this->l('Catalog truncated')
+																					.'<br/>'
+																					.$this->showLogs($logs));
 		}
 		elseif (Tools::getValue('submitTruncateSales') && Tools::getValue('checkTruncateSales'))
 		{
-			self::truncate('sales');
-			$html .= $this->displayConfirmation($this->l('Orders and customers truncated'));
+			$logs = self::truncate('sales');
+			$html .= $this->displayConfirmation($this->l('Orders and customers truncated')
+																					.'<br/>'
+																					.$this->showLogs($logs));
 		}
 		
 		// d($_POST);
+		if(PHP_SAPI === 'cli') return $html;
 
 		$html .= '
 		<script type="text/javascript">
@@ -137,6 +133,22 @@ class PSCleaner extends Module
 		</script>';
 		
 		return $html.$this->renderForm();
+	}
+
+	public function showLogs($logs) {
+		if (! count($logs))
+			return $this->l('Nothing that need to be cleaned');
+
+		// else
+		$conf = $this->l('The following queries successfully cleaned your database:').'<br/><ul>';
+		foreach ($logs as $query => $entries) {
+			$conf .= '<li>'.Tools::htmlentitiesUTF8($query)
+				.'<br />'
+				.sprintf($this->l('%d line(s)'), $entries)
+				.'</li>';
+		}
+		$conf .= '</ul>';
+		return $conf;
 	}
 
 	public static function checkAndFix()
@@ -492,7 +504,12 @@ class PSCleaner extends Module
 				);
 				foreach ($tables as $table)
 					$db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
-				$db->execute('DELETE FROM `'._DB_PREFIX_.'address` WHERE id_manufacturer > 0 OR id_supplier > 0 OR id_warehouse > 0');
+				$q_str = "TRUNCATE TABLE ".array_map(function($e) {return '`' . _DB_PREFIX_.bqSQL($e) . '`';},
+																						 $tables);
+				$logs[$q_str] = count($tables);
+				$query = 'DELETE FROM `'._DB_PREFIX_.'address` WHERE id_manufacturer > 0 OR id_supplier > 0 OR id_warehouse > 0';
+				$db->execute($query);
+				$logs[$query] = $db->Affected_Rows();
 
 				Image::deleteAllImages(_PS_PROD_IMG_DIR_);
 				if (!file_exists(_PS_PROD_IMG_DIR_))
@@ -555,12 +572,19 @@ class PSCleaner extends Module
 
 				foreach ($tables as $table)
 					$db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
-				$db->execute('DELETE FROM `'._DB_PREFIX_.'address` WHERE id_customer > 0');
-				$db->execute('UPDATE `'._DB_PREFIX_.'employee` SET `id_last_order` = 0,`id_last_customer_message` = 0,`id_last_customer` = 0');
-
+				$q_str = "TRUNCATE TABLE " . implode(', ',
+				array_map(function($e) {return '`' . _DB_PREFIX_.bqSQL($e) . '`';}, $tables));
+				$logs[$q_str] = count($tables);
+				$query = 'DELETE FROM `'._DB_PREFIX_.'address` WHERE id_customer > 0';
+				$db->execute($query);
+				$logs[$query] = $db->Affected_Rows();
+				$query = 'UPDATE `'._DB_PREFIX_.'employee` SET `id_last_order` = 0,`id_last_customer_message` = 0,`id_last_customer` = 0';
+				$db->execute($query);
+				$logs[$query] = $db->Affected_Rows();
 				break;
 		}
 		self::clearAllCaches();
+		return $logs;
 	}
 
 	public static function cleanAndOptimize()
