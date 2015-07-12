@@ -104,7 +104,7 @@ class PSCleaner extends Module
 		}
 		elseif (Tools::getValue('submitTruncateSales') && Tools::getValue('checkTruncateSales'))
 		{
-			self::truncate('sales');
+			self::truncate('sales', Tools::getValue('keepAutoinc', true));
 			$html .= $this->displayConfirmation($this->l('Orders and customers truncated'));
 		}
 		
@@ -135,7 +135,7 @@ class PSCleaner extends Module
 				});
 			});
 		</script>';
-		
+
 		return $html.$this->renderForm();
 	}
 
@@ -394,7 +394,7 @@ class PSCleaner extends Module
 		return $logs;
 	}
 
-	public function truncate($case)
+	public function truncate($case, $keep_autoinc = TRUE)
 	{
 		$db = Db::getInstance();
 
@@ -553,8 +553,22 @@ class PSCleaner extends Module
 					if (Module::isInstalled($name))
 						$tables = array_merge($tables, $module_tables);
 
-				foreach ($tables as $table)
+				foreach ($tables as $table) {
+					// store AUTOINC before TRUNCATE
+					if($keep_autoinc && ($table == 'orders' || $table == 'cart')) {
+						$status = $db->executeS(
+							sprintf("SHOW TABLE STATUS FROM `%s` LIKE '%s%s'", _DB_NAME_, _DB_PREFIX_, $table));
+						$autoinc = (int)$status[0]['Auto_increment'];
+					}
+
 					$db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
+
+					// restore AUTOINC after TRUNCATE
+					if($keep_autoinc && ($table == 'orders' || $table == 'cart')) {
+						$db->query(sprintf("ALTER TABLE `%s%s` AUTO_INCREMENT=%d", _DB_PREFIX_, $table, $autoinc));
+					}
+
+				}
 				$db->execute('DELETE FROM `'._DB_PREFIX_.'address` WHERE id_customer > 0');
 				$db->execute('UPDATE `'._DB_PREFIX_.'employee` SET `id_last_order` = 0,`id_last_customer_message` = 0,`id_last_customer` = 0');
 
@@ -693,7 +707,22 @@ class PSCleaner extends Module
 								'label' => $this->l('Disabled')
 							)
 						)
-					)
+					),
+					array(
+						'type' => 'checkbox',
+						'name' => 'keepAutoinc',
+						'values' => array(
+							'query' => array(
+								array(
+									'id' => 'on',
+									'name' => $this->l('Preserve the AUTO_INCREMENT value of the two tables "orders" and "cart" from being reseted.'),
+									'val' => '1'
+								),
+							),
+							'id' => 'id',
+							'name' => 'name'
+						)
+					),
 				),
 				'submit' => array(
 					'title' => $this->l('Delete orders & customers'),
