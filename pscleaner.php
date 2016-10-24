@@ -514,7 +514,7 @@ class PSCleaner extends Module
 
     public static function getCheckAndFixQueries()
     {
-        $append = [];
+        $append = array();
         if (!version_compare('1.7.0.0', _PS_VERSION_, '>=')) {
             $append = array(
                 array('access', 'id_tab', 'tab', 'id_tab'),
