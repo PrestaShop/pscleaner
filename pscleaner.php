@@ -103,8 +103,6 @@ class PSCleaner extends Module
             $html .= $this->displayConfirmation($this->l('Orders and customers truncated'));
         }
 
-        // d($_POST);
-
         $html .= '
 		<script type="text/javascript">
 			$(document).ready(function(){
