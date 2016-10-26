@@ -676,7 +676,7 @@ class PSCleaner extends Module
 
     public static function getCatalogRelatedTables()
     {
-        $append = [];
+        $append = array();
         if (!version_compare('1.7.0.0', _PS_VERSION_, '>=')) {
             $append = array(
                 'compare_product',
