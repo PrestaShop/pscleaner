@@ -513,7 +513,7 @@ class PSCleaner extends Module
     public static function getCheckAndFixQueries()
     {
         $append = array();
-        if (!version_compare('1.7.0.0', _PS_VERSION_, '>=')) {
+        if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
             $append = array(
                 array('access', 'id_tab', 'tab', 'id_tab'),
                 array('compare_product', 'id_compare', 'compare', 'id_compare'),
@@ -677,7 +677,7 @@ class PSCleaner extends Module
     public static function getCatalogRelatedTables()
     {
         $append = array();
-        if (!version_compare('1.7.0.0', _PS_VERSION_, '>=')) {
+        if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
             $append = array(
                 'compare_product',
                 'scene_products',
