@@ -723,6 +723,7 @@ class PSCleaner extends Module
             'product_attribute_shop',
             'product_attribute_combination',
             'product_attribute_image',
+	     'attribute',
             'attribute_impact',
             'attribute_lang',
             'attribute_group',
