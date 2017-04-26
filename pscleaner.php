@@ -552,6 +552,8 @@ class PSCleaner extends Module
             array('cart_rule_country', 'id_country', 'country', 'id_country'),
             array('cart_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
             array('cart_rule_group', 'id_group', 'group', 'id_group'),
+            array('cart_rule_lang', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
+            array('cart_rule_lang', 'id_lang', 'lang', 'id_lang'),
             array('cart_rule_product_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
             array('cart_rule_product_rule', 'id_product_rule_group', 'cart_rule_product_rule_group', 'id_product_rule_group'),
             array('cart_rule_product_rule_value', 'id_product_rule', 'cart_rule_product_rule', 'id_product_rule'),
