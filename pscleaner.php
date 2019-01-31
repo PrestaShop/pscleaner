@@ -38,9 +38,7 @@ class PSCleaner extends Module
         $this->version = '2.0.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
-        if (version_compare(_PS_VERSION_, '1.5.0.0 ', '>=')) {
-            $this->multishop_context = Shop::CONTEXT_ALL;
-        }
+        $this->multishop_context = Shop::CONTEXT_ALL;
 
         $this->bootstrap = true;
         parent::__construct();
@@ -49,25 +47,12 @@ class PSCleaner extends Module
         $this->description = $this->trans('Check and fix functional integrity constraints and remove default data', array(), 'Modules.Pscleaner.Admin');
         $this->secure_key = Tools::encrypt($this->name);
 	    
-	$this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
+	    $this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
     }
 
     protected function getMultiShopValues($key)
     {
-        if (version_compare(_PS_VERSION_, '1.6.0.3', '>=') === true) {
             return Configuration::getMultiShopValues($key);
-        } else {
-            $shops = Shop::getShops(false, null, true);
-            $id_lang = (int) $this->context->language->id;
-            $results = array();
-            array_push($results, Configuration::get($key));
-
-            foreach ($shops as $id_shop) {
-                array_push($results, Configuration::get($key, $id_lang, null, $id_shop));
-            }
-
-            return $results;
-        }
     }
 
     public function getContent()
@@ -515,24 +500,8 @@ class PSCleaner extends Module
 
     public static function getCheckAndFixQueries()
     {
-        $append = array();
-        if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
-            $append = array(
-                array('access', 'id_tab', 'tab', 'id_tab'),
-                array('compare_product', 'id_compare', 'compare', 'id_compare'),
-                array('compare_product', 'id_product', 'product', 'id_product'),
-                array('compare', 'id_customer', 'customer', 'id_customer'),
-                array('module_access', 'id_module', 'module', 'id_module'),
-                array('scene_category', 'id_scene', 'scene', 'id_scene'),
-                array('scene_category', 'id_category', 'category', 'id_category'),
-                array('scene_products', 'id_scene', 'scene', 'id_scene'),
-                array('scene_products', 'id_product', 'product', 'id_product'),
-                array('theme_specific', 'id_theme', 'theme', 'id_theme'),
-                array('theme_specific', 'id_shop', 'shop', 'id_shop'),
-            );
-        }
 
-        return array_merge($append, array(
+        return array(
             // 0 => DELETE FROM __table__, 1 => WHERE __id__ NOT IN, 2 => NOT IN __table__, 3 => __id__ used in the "NOT IN" table, 4 => module_name
             array('access', 'id_profile', 'profile', 'id_profile'),
             array('accessory', 'id_product_1', 'product', 'id_product'),
@@ -676,25 +645,24 @@ class PSCleaner extends Module
             array('warehouse_carrier', 'id_carrier', 'carrier', 'id_carrier'),
             array('warehouse_product_location', 'id_product', 'product', 'id_product'),
             array('warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse'),
-        ));
+            array('access', 'id_tab', 'tab', 'id_tab'),
+            array('compare_product', 'id_compare', 'compare', 'id_compare'),
+            array('compare_product', 'id_product', 'product', 'id_product'),
+            array('compare', 'id_customer', 'customer', 'id_customer'),
+            array('module_access', 'id_module', 'module', 'id_module'),
+            array('scene_category', 'id_scene', 'scene', 'id_scene'),
+            array('scene_category', 'id_category', 'category', 'id_category'),
+            array('scene_products', 'id_scene', 'scene', 'id_scene'),
+            array('scene_products', 'id_product', 'product', 'id_product'),
+            array('theme_specific', 'id_theme', 'theme', 'id_theme'),
+            array('theme_specific', 'id_shop', 'shop', 'id_shop'),
+        );
     }
 
     public static function getCatalogRelatedTables()
     {
-        $append = array();
-        if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
-            $append = array(
-                'compare_product',
-                'scene_products',
-                'scene',
-                'scene_category',
-                'scene_lang',
-                'scene_products',
-                'scene_shop',
-            );
-        }
 
-        return array_merge($append, array(
+        return array(
             'product',
             'product_shop',
             'feature_product',
@@ -767,7 +735,14 @@ class PSCleaner extends Module
             'stock_available',
             'stock_mvt',
             'warehouse',
-        ));
+            'compare_product',
+            'scene_products',
+            'scene',
+            'scene_category',
+            'scene_lang',
+            'scene_products',
+            'scene_shop',
+        );
     }
 
     public static function getSalesRelatedTables()
