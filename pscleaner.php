@@ -529,7 +529,6 @@ class PSCleaner extends Module
                 array('scene_products', 'id_product', 'product', 'id_product'),
                 array('theme_specific', 'id_theme', 'theme', 'id_theme'),
                 array('theme_specific', 'id_shop', 'shop', 'id_shop'),
-
             );
         }
 
