@@ -45,11 +45,11 @@ class PSCleaner extends Module
         $this->bootstrap = true;
         parent::__construct();
 
-        $this->displayName = $this->trans('PrestaShop Cleaner', array(), 'Modules.Pscleaner.Admin');
-        $this->description = $this->trans('Check and fix functional integrity constraints and remove default data', array(), 'Modules.Pscleaner.Admin');
+        $this->displayName = $this->trans('PrestaShop Cleaner', [], 'Modules.Pscleaner.Admin');
+        $this->description = $this->trans('Check and fix functional integrity constraints and remove default data', [], 'Modules.Pscleaner.Admin');
         $this->secure_key = Tools::encrypt($this->name);
 	    
-	$this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
+	$this->ps_versions_compliancy = ['min' => '1.7.1.0', 'max' => _PS_VERSION_];
     }
 
     protected function getMultiShopValues($key)
@@ -59,7 +59,7 @@ class PSCleaner extends Module
         } else {
             $shops = Shop::getShops(false, null, true);
             $id_lang = (int) $this->context->language->id;
-            $results = array();
+            $results = [];
             array_push($results, Configuration::get($key));
 
             foreach ($shops as $id_shop) {
@@ -72,37 +72,37 @@ class PSCleaner extends Module
 
     public function getContent()
     {
-        $html = '<h2>'.$this->trans('Be really careful with this tool - There is no possible rollback!', array(), 'Modules.Pscleaner.Admin').'</h2>';
+        $html = '<h2>'.$this->trans('Be really careful with this tool - There is no possible rollback!', [], 'Modules.Pscleaner.Admin').'</h2>';
         if (Tools::isSubmit('submitCheckAndFix')) {
             $logs = self::checkAndFix();
             if (count($logs)) {
-                $conf = $this->trans('The following queries successfuly fixed broken data:', array(), 'Modules.Pscleaner.Admin').'<br /><ul>';
+                $conf = $this->trans('The following queries successfuly fixed broken data:', [], 'Modules.Pscleaner.Admin').'<br /><ul>';
                 foreach ($logs as $query => $entries) {
-                    $conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.$this->trans('%d line(s)', array($entries), 'Modules.Pscleaner.Admin').'</li>';
+                    $conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.$this->trans('%d line(s)', [$entries], 'Modules.Pscleaner.Admin').'</li>';
                 }
                 $conf .= '</ul>';
             } else {
-                $conf = $this->trans('Nothing that need to be fixed', array(), 'Modules.Pscleaner.Admin');
+                $conf = $this->trans('Nothing that need to be fixed', [], 'Modules.Pscleaner.Admin');
             }
             $html .= $this->displayConfirmation($conf);
         } elseif (Tools::isSubmit('submitCleanAndOptimize')) {
             $logs = self::cleanAndOptimize();
             if (count($logs)) {
-                $conf = $this->trans('The following queries successfuly cleaned your database:', array(), 'Modules.Pscleaner.Admin').'<br /><ul>';
+                $conf = $this->trans('The following queries successfuly cleaned your database:', [], 'Modules.Pscleaner.Admin').'<br /><ul>';
                 foreach ($logs as $query => $entries) {
-                    $conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.$this->trans('%d line(s)', array($entries), 'Modules.Pscleaner.Admin').'</li>';
+                    $conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.$this->trans('%d line(s)', [$entries], 'Modules.Pscleaner.Admin').'</li>';
                 }
                 $conf .= '</ul>';
             } else {
-                $conf = $this->trans('Nothing that need to be cleaned', array(), 'Modules.Pscleaner.Admin');
+                $conf = $this->trans('Nothing that need to be cleaned', [], 'Modules.Pscleaner.Admin');
             }
             $html .= $this->displayConfirmation($conf);
         } elseif (Tools::getValue('submitTruncateCatalog') && Tools::getValue('checkTruncateCatalog')) {
             self::truncate('catalog');
-            $html .= $this->displayConfirmation($this->trans('Catalog truncated', array(), 'Modules.Pscleaner.Admin'));
+            $html .= $this->displayConfirmation($this->trans('Catalog truncated', [], 'Modules.Pscleaner.Admin'));
         } elseif (Tools::getValue('submitTruncateSales') && Tools::getValue('checkTruncateSales')) {
             self::truncate('sales');
-            $html .= $this->displayConfirmation($this->trans('Orders and customers truncated', array(), 'Modules.Pscleaner.Admin'));
+            $html .= $this->displayConfirmation($this->trans('Orders and customers truncated', [], 'Modules.Pscleaner.Admin'));
         }
 
         $html .= '
@@ -111,20 +111,20 @@ class PSCleaner extends Module
 				$("#submitTruncateCatalog").click(function(){
 					if ($(\'#checkTruncateCatalog_on\').attr(\'checked\') != "checked")
 					{
-						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
+						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', [], 'Modules.Pscleaner.Admin'))).'\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
+					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', [], 'Modules.Pscleaner.Admin'))).'\'))
 						return true;
 					return false;
 				});
 				$("#submitTruncateSales").click(function(){
 					if ($(\'#checkTruncateSales_on\').attr(\'checked\') != "checked")
 					{
-						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
+						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', [], 'Modules.Pscleaner.Admin'))).'\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
+					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', [], 'Modules.Pscleaner.Admin'))).'\'))
 						return true;
 					return false;
 				});
@@ -137,10 +137,10 @@ class PSCleaner extends Module
     public static function checkAndFix()
     {
         $db = Db::getInstance();
-        $logs = array();
+        $logs = [];
 
         // Remove doubles in the configuration
-        $filtered_configuration = array();
+        $filtered_configuration = [];
         $result = $db->ExecuteS('SELECT * FROM '._DB_PREFIX_.'configuration');
         foreach ($result as $row) {
             $key = $row['id_shop_group'].'-|-'.$row['id_shop'].'-|-'.$row['name'];
@@ -211,7 +211,7 @@ class PSCleaner extends Module
             $table = str_replace('_shop', '', $table_shop);
             $id_table = 'id_'.preg_replace('/^'._DB_PREFIX_.'/', '', $table);
 
-            if (in_array($table_shop, array(_DB_PREFIX_.'carrier_tax_rules_group_shop'))) {
+            if (in_array($table_shop, [_DB_PREFIX_.'carrier_tax_rules_group_shop'])) {
                 continue;
             }
 
@@ -289,11 +289,11 @@ class PSCleaner extends Module
             case 'sales':
                 $tables = self::getSalesRelatedTables();
 
-                $modules_tables = array(
-                    'sekeywords' => array('sekeyword'),
-                    'pagesnotfound' => array('pagenotfound'),
-                    'paypal' => array('paypal_customer', 'paypal_order')
-                );
+                $modules_tables = [
+                    'sekeywords' => ['sekeyword'],
+                    'pagesnotfound' => ['pagenotfound'],
+                    'paypal' => ['paypal_customer', 'paypal_order']
+                ];
 
                 foreach ($modules_tables as $name => $module_tables) {
                     if (Module::isInstalled($name)) {
@@ -315,7 +315,7 @@ class PSCleaner extends Module
 
     public static function cleanAndOptimize()
     {
-        $logs = array();
+        $logs = [];
 
         $query = '
 		DELETE FROM `'._DB_PREFIX_.'cart`
@@ -388,102 +388,102 @@ class PSCleaner extends Module
 
     public function renderForm()
     {
-        $fields_form_1 = array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->trans('Catalog', array(), 'Modules.Pscleaner.Admin'),
+        $fields_form_1 = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Catalog', [], 'Modules.Pscleaner.Admin'),
                     'icon' => 'icon-cogs'
-                ),
-                'input' => array(
-                    array(
+                ],
+                'input' => [
+                    [
                         'type' => 'switch',
                         'is_bool' => true,
-                        'label' => $this->trans('I understand that all the catalog data will be removed without possible rollback: products, features, categories, tags, images, prices, attachments, scenes, stocks, attribute groups and values, manufacturers, suppliers...', array(), 'Modules.Pscleaner.Admin'),
+                        'label' => $this->trans('I understand that all the catalog data will be removed without possible rollback: products, features, categories, tags, images, prices, attachments, scenes, stocks, attribute groups and values, manufacturers, suppliers...', [], 'Modules.Pscleaner.Admin'),
                         'name' => 'checkTruncateCatalog',
-                        'values' => array(
-                            array(
+                        'values' => [
+                            [
                                 'id' => 'checkTruncateCatalog_on',
                                 'value' => 1,
-                                'label' => $this->trans('Enabled', array(), 'Admin.Global')
-                            ),
-                            array(
+                                'label' => $this->trans('Enabled', [], 'Admin.Global')
+                            ],
+                            [
                                 'id' => 'checkTruncateCatalog_off',
                                 'value' => 0,
-                                'label' => $this->trans('Disabled', array(), 'Admin.Global')
-                            )
-                        )
-                    )
-                ),
-                'submit' => array(
-                    'title' => $this->trans('Delete catalog', array(), 'Modules.Pscleaner.Admin'),
+                                'label' => $this->trans('Disabled', [], 'Admin.Global')
+                            ]
+                        ]
+                    ]
+                ],
+                'submit' => [
+                    'title' => $this->trans('Delete catalog', [], 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitTruncateCatalog',
                     'id' => 'submitTruncateCatalog',
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $fields_form_2 = array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->trans('Orders and customers', array(), 'Modules.Pscleaner.Admin'),
+        $fields_form_2 = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Orders and customers', [], 'Modules.Pscleaner.Admin'),
                     'icon' => 'icon-cogs'
-                ),
-                'input' => array(
-                    array(
+                ],
+                'input' => [
+                    [
                         'type' => 'switch',
                         'is_bool' => true,
-                        'label' => $this->trans('I understand that all the orders and customers will be removed without possible rollback: customers, carts, orders, connections, guests, messages, stats...', array(), 'Modules.Pscleaner.Admin'),
+                        'label' => $this->trans('I understand that all the orders and customers will be removed without possible rollback: customers, carts, orders, connections, guests, messages, stats...', [], 'Modules.Pscleaner.Admin'),
                         'name' => 'checkTruncateSales',
-                        'values' => array(
-                            array(
+                        'values' => [
+                            [
                                 'id' => 'checkTruncateSales_on',
                                 'value' => 1,
-                                'label' => $this->trans('Enabled', array(), 'Admin.Global')
-                            ),
-                            array(
+                                'label' => $this->trans('Enabled', [], 'Admin.Global')
+                            ],
+                            [
                                 'id' => 'checkTruncateSales_off',
                                 'value' => 0,
-                                'label' => $this->trans('Disabled', array(), 'Admin.Global')
-                            )
-                        )
-                    )
-                ),
-                'submit' => array(
-                    'title' => $this->trans('Delete orders & customers', array(), 'Modules.Pscleaner.Admin'),
+                                'label' => $this->trans('Disabled', [], 'Admin.Global')
+                            ]
+                        ]
+                    ]
+                ],
+                'submit' => [
+                    'title' => $this->trans('Delete orders & customers', [], 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitTruncateSales',
                     'id' => 'submitTruncateSales',
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $fields_form_3 = array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->trans('Functional integrity constraints', array(), 'Modules.Pscleaner.Admin'),
+        $fields_form_3 = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Functional integrity constraints', [], 'Modules.Pscleaner.Admin'),
                     'icon' => 'icon-cogs'
-                ),
-                'submit' => array(
-                    'title' => $this->trans('Check & fix', array(), 'Modules.Pscleaner.Admin'),
+                ],
+                'submit' => [
+                    'title' => $this->trans('Check & fix', [], 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitCheckAndFix',
-                )
-            )
-        );
-        $fields_form_4 = array(
-            'form' => array(
-                'legend' => array(
-                    'title' => $this->trans('Database cleaning', array(), 'Modules.Pscleaner.Admin'),
+                ]
+            ]
+        ];
+        $fields_form_4 = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Database cleaning', [], 'Modules.Pscleaner.Admin'),
                     'icon' => 'icon-cogs'
-                ),
-                'submit' => array(
-                    'title' => $this->trans('Clean & Optimize', array(), 'Modules.Pscleaner.Admin'),
+                ],
+                'submit' => [
+                    'title' => $this->trans('Clean & Optimize', [], 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitCleanAndOptimize',
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
         $helper = new HelperForm();
         $helper->module = $this;
@@ -492,195 +492,195 @@ class PSCleaner extends Module
         $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
-        $this->fields_form = array();
+        $this->fields_form = [];
         $helper->id = (int)Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->tpl_vars = array(
+        $helper->tpl_vars = [
             'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
             'id_language' => $this->context->language->id
-        );
+        ];
 
-        return $helper->generateForm(array($fields_form_1, $fields_form_2, $fields_form_3, $fields_form_4));
+        return $helper->generateForm([$fields_form_1, $fields_form_2, $fields_form_3, $fields_form_4]);
     }
 
     public function getConfigFieldsValues()
     {
-        return array('checkTruncateSales' => 0, 'checkTruncateCatalog' => 0);
+        return ['checkTruncateSales' => 0, 'checkTruncateCatalog' => 0];
     }
 
     public static function getCheckAndFixQueries()
     {
-        $append = array();
+        $append = [];
         if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
-            $append = array(
-                array('access', 'id_tab', 'tab', 'id_tab'),
-                array('compare_product', 'id_compare', 'compare', 'id_compare'),
-                array('compare_product', 'id_product', 'product', 'id_product'),
-                array('compare', 'id_customer', 'customer', 'id_customer'),
-                array('module_access', 'id_module', 'module', 'id_module'),
-                array('scene_category', 'id_scene', 'scene', 'id_scene'),
-                array('scene_category', 'id_category', 'category', 'id_category'),
-                array('scene_products', 'id_scene', 'scene', 'id_scene'),
-                array('scene_products', 'id_product', 'product', 'id_product'),
-                array('theme_specific', 'id_theme', 'theme', 'id_theme'),
-                array('theme_specific', 'id_shop', 'shop', 'id_shop'),
+            $append = [
+                ['access', 'id_tab', 'tab', 'id_tab'],
+                ['compare_product', 'id_compare', 'compare', 'id_compare'],
+                ['compare_product', 'id_product', 'product', 'id_product'],
+                ['compare', 'id_customer', 'customer', 'id_customer'],
+                ['module_access', 'id_module', 'module', 'id_module'],
+                ['scene_category', 'id_scene', 'scene', 'id_scene'],
+                ['scene_category', 'id_category', 'category', 'id_category'],
+                ['scene_products', 'id_scene', 'scene', 'id_scene'],
+                ['scene_products', 'id_product', 'product', 'id_product'],
+                ['theme_specific', 'id_theme', 'theme', 'id_theme'],
+                ['theme_specific', 'id_shop', 'shop', 'id_shop'],
 
-            );
+            ];
         }
-        return array_merge($append, array(
+        return array_merge($append, [
             // 0 => DELETE FROM __table__, 1 => WHERE __id__ NOT IN, 2 => NOT IN __table__, 3 => __id__ used in the "NOT IN" table, 4 => module_name
-            array('access', 'id_profile', 'profile', 'id_profile'),
-            array('accessory', 'id_product_1', 'product', 'id_product'),
-            array('accessory', 'id_product_2', 'product', 'id_product'),
-            array('address_format', 'id_country', 'country', 'id_country'),
-            array('attribute', 'id_attribute_group', 'attribute_group', 'id_attribute_group'),
-            array('carrier_group', 'id_carrier', 'carrier', 'id_carrier'),
-            array('carrier_group', 'id_group', 'group', 'id_group'),
-            array('carrier_zone', 'id_carrier', 'carrier', 'id_carrier'),
-            array('carrier_zone', 'id_zone', 'zone', 'id_zone'),
-            array('cart_cart_rule', 'id_cart', 'cart', 'id_cart'),
-            array('cart_product', 'id_cart', 'cart', 'id_cart'),
-            array('cart_rule_carrier', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
-            array('cart_rule_carrier', 'id_carrier', 'carrier', 'id_carrier'),
-            array('cart_rule_combination', 'id_cart_rule_1', 'cart_rule', 'id_cart_rule'),
-            array('cart_rule_combination', 'id_cart_rule_2', 'cart_rule', 'id_cart_rule'),
-            array('cart_rule_country', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
-            array('cart_rule_country', 'id_country', 'country', 'id_country'),
-            array('cart_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
-            array('cart_rule_group', 'id_group', 'group', 'id_group'),
-            array('cart_rule_product_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
-            array('cart_rule_product_rule', 'id_product_rule_group', 'cart_rule_product_rule_group', 'id_product_rule_group'),
-            array('cart_rule_product_rule_value', 'id_product_rule', 'cart_rule_product_rule', 'id_product_rule'),
-            array('category_group', 'id_category', 'category', 'id_category'),
-            array('category_group', 'id_group', 'group', 'id_group'),
-            array('category_product', 'id_category', 'category', 'id_category'),
-            array('category_product', 'id_product', 'product', 'id_product'),
-            array('cms', 'id_cms_category', 'cms_category', 'id_cms_category'),
-            array('cms_block', 'id_cms_category', 'cms_category', 'id_cms_category', 'blockcms'),
-            array('cms_block_page', 'id_cms', 'cms', 'id_cms', 'blockcms'),
-            array('cms_block_page', 'id_cms_block', 'cms_block', 'id_cms_block', 'blockcms'),
-            array('connections', 'id_shop_group', 'shop_group', 'id_shop_group'),
-            array('connections', 'id_shop', 'shop', 'id_shop'),
-            array('connections_page', 'id_connections', 'connections', 'id_connections'),
-            array('connections_page', 'id_page', 'page', 'id_page'),
-            array('connections_source', 'id_connections', 'connections', 'id_connections'),
-            array('customer', 'id_shop_group', 'shop_group', 'id_shop_group'),
-            array('customer', 'id_shop', 'shop', 'id_shop'),
-            array('customer_group', 'id_group', 'group', 'id_group'),
-            array('customer_group', 'id_customer', 'customer', 'id_customer'),
-            array('customer_message', 'id_customer_thread', 'customer_thread', 'id_customer_thread'),
-            array('customer_thread', 'id_shop', 'shop', 'id_shop'),
-            array('customization', 'id_cart', 'cart', 'id_cart'),
-            array('customization_field', 'id_product', 'product', 'id_product'),
-            array('customized_data', 'id_customization', 'customization', 'id_customization'),
-            array('delivery', 'id_shop', 'shop', 'id_shop'),
-            array('delivery', 'id_shop_group', 'shop_group', 'id_shop_group'),
-            array('delivery', 'id_carrier', 'carrier', 'id_carrier'),
-            array('delivery', 'id_zone', 'zone', 'id_zone'),
-            array('editorial', 'id_shop', 'shop', 'id_shop', 'editorial'),
-            array('favorite_product', 'id_product', 'product', 'id_product', 'favoriteproducts'),
-            array('favorite_product', 'id_customer', 'customer', 'id_customer', 'favoriteproducts'),
-            array('favorite_product', 'id_shop', 'shop', 'id_shop', 'favoriteproducts'),
-            array('feature_product', 'id_feature', 'feature', 'id_feature'),
-            array('feature_product', 'id_product', 'product', 'id_product'),
-            array('feature_value', 'id_feature', 'feature', 'id_feature'),
-            array('group_reduction', 'id_group', 'group', 'id_group'),
-            array('group_reduction', 'id_category', 'category', 'id_category'),
-            array('homeslider', 'id_shop', 'shop', 'id_shop', 'homeslider'),
-            array('homeslider', 'id_homeslider_slides', 'homeslider_slides', 'id_homeslider_slides', 'homeslider'),
-            array('hook_module', 'id_hook', 'hook', 'id_hook'),
-            array('hook_module', 'id_module', 'module', 'id_module'),
-            array('hook_module_exceptions', 'id_hook', 'hook', 'id_hook'),
-            array('hook_module_exceptions', 'id_module', 'module', 'id_module'),
-            array('hook_module_exceptions', 'id_shop', 'shop', 'id_shop'),
-            array('image', 'id_product', 'product', 'id_product'),
-            array('message', 'id_cart', 'cart', 'id_cart'),
-            array('message_readed', 'id_message', 'message', 'id_message'),
-            array('message_readed', 'id_employee', 'employee', 'id_employee'),
-            array('module_access', 'id_profile', 'profile', 'id_profile'),
-            array('module_country', 'id_module', 'module', 'id_module'),
-            array('module_country', 'id_country', 'country', 'id_country'),
-            array('module_country', 'id_shop', 'shop', 'id_shop'),
-            array('module_currency', 'id_module', 'module', 'id_module'),
-            array('module_currency', 'id_currency', 'currency', 'id_currency'),
-            array('module_currency', 'id_shop', 'shop', 'id_shop'),
-            array('module_group', 'id_module', 'module', 'id_module'),
-            array('module_group', 'id_group', 'group', 'id_group'),
-            array('module_group', 'id_shop', 'shop', 'id_shop'),
-            array('module_preference', 'id_employee', 'employee', 'id_employee'),
-            array('orders', 'id_shop', 'shop', 'id_shop'),
-            array('orders', 'id_shop_group', 'group_shop', 'id_shop_group'),
-            array('order_carrier', 'id_order', 'orders', 'id_order'),
-            array('order_cart_rule', 'id_order', 'orders', 'id_order'),
-            array('order_detail', 'id_order', 'orders', 'id_order'),
-            array('order_detail_tax', 'id_order_detail', 'order_detail', 'id_order_detail'),
-            array('order_history', 'id_order', 'orders', 'id_order'),
-            array('order_invoice', 'id_order', 'orders', 'id_order'),
-            array('order_invoice_payment', 'id_order', 'orders', 'id_order'),
-            array('order_invoice_tax', 'id_order_invoice', 'order_invoice', 'id_order_invoice'),
-            array('order_return', 'id_order', 'orders', 'id_order'),
-            array('order_return_detail', 'id_order_return', 'order_return', 'id_order_return'),
-            array('order_slip', 'id_order', 'orders', 'id_order'),
-            array('order_slip_detail', 'id_order_slip', 'order_slip', 'id_order_slip'),
-            array('pack', 'id_product_pack', 'product', 'id_product'),
-            array('pack', 'id_product_item', 'product', 'id_product'),
-            array('page', 'id_page_type', 'page_type', 'id_page_type'),
-            array('page_viewed', 'id_shop', 'shop', 'id_shop'),
-            array('page_viewed', 'id_shop_group', 'shop_group', 'id_shop_group'),
-            array('page_viewed', 'id_date_range', 'date_range', 'id_date_range'),
-            array('product_attachment', 'id_attachment', 'attachment', 'id_attachment'),
-            array('product_attachment', 'id_product', 'product', 'id_product'),
-            array('product_attribute', 'id_product', 'product', 'id_product'),
-            array('product_attribute_combination', 'id_product_attribute', 'product_attribute', 'id_product_attribute'),
-            array('product_attribute_combination', 'id_attribute', 'attribute', 'id_attribute'),
-            array('product_attribute_image', 'id_image', 'image', 'id_image'),
-            array('product_attribute_image', 'id_product_attribute', 'product_attribute', 'id_product_attribute'),
-            array('product_carrier', 'id_product', 'product', 'id_product'),
-            array('product_carrier', 'id_shop', 'shop', 'id_shop'),
-            array('product_carrier', 'id_carrier_reference', 'carrier', 'id_reference'),
-            array('product_country_tax', 'id_product', 'product', 'id_product'),
-            array('product_country_tax', 'id_country', 'country', 'id_country'),
-            array('product_country_tax', 'id_tax', 'tax', 'id_tax'),
-            array('product_download', 'id_product', 'product', 'id_product'),
-            array('product_group_reduction_cache', 'id_product', 'product', 'id_product'),
-            array('product_group_reduction_cache', 'id_group', 'group', 'id_group'),
-            array('product_sale', 'id_product', 'product', 'id_product'),
-            array('product_supplier', 'id_product', 'product', 'id_product'),
-            array('product_supplier', 'id_supplier', 'supplier', 'id_supplier'),
-            array('product_tag', 'id_product', 'product', 'id_product'),
-            array('product_tag', 'id_tag', 'tag', 'id_tag'),
-            array('range_price', 'id_carrier', 'carrier', 'id_carrier'),
-            array('range_weight', 'id_carrier', 'carrier', 'id_carrier'),
-            array('referrer_cache', 'id_referrer', 'referrer', 'id_referrer'),
-            array('referrer_cache', 'id_connections_source', 'connections_source', 'id_connections_source'),
-            array('search_index', 'id_product', 'product', 'id_product'),
-            array('search_word', 'id_lang', 'lang', 'id_lang'),
-            array('search_word', 'id_shop', 'shop', 'id_shop'),
-            array('shop_url', 'id_shop', 'shop', 'id_shop'),
-            array('specific_price_priority', 'id_product', 'product', 'id_product'),
-            array('stock', 'id_warehouse', 'warehouse', 'id_warehouse'),
-            array('stock', 'id_product', 'product', 'id_product'),
-            array('stock_available', 'id_product', 'product', 'id_product'),
-            array('stock_mvt', 'id_stock', 'stock', 'id_stock'),
-            array('tab_module_preference', 'id_employee', 'employee', 'id_employee'),
-            array('tab_module_preference', 'id_tab', 'tab', 'id_tab'),
-            array('tax_rule', 'id_country', 'country', 'id_country'),
-            array('warehouse_carrier', 'id_warehouse', 'warehouse', 'id_warehouse'),
-            array('warehouse_carrier', 'id_carrier', 'carrier', 'id_carrier'),
-            array('warehouse_product_location', 'id_product', 'product', 'id_product'),
-            array('warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse'),
-        ));
+            ['access', 'id_profile', 'profile', 'id_profile'],
+            ['accessory', 'id_product_1', 'product', 'id_product'],
+            ['accessory', 'id_product_2', 'product', 'id_product'],
+            ['address_format', 'id_country', 'country', 'id_country'],
+            ['attribute', 'id_attribute_group', 'attribute_group', 'id_attribute_group'],
+            ['carrier_group', 'id_carrier', 'carrier', 'id_carrier'],
+            ['carrier_group', 'id_group', 'group', 'id_group'],
+            ['carrier_zone', 'id_carrier', 'carrier', 'id_carrier'],
+            ['carrier_zone', 'id_zone', 'zone', 'id_zone'],
+            ['cart_cart_rule', 'id_cart', 'cart', 'id_cart'],
+            ['cart_product', 'id_cart', 'cart', 'id_cart'],
+            ['cart_rule_carrier', 'id_cart_rule', 'cart_rule', 'id_cart_rule'],
+            ['cart_rule_carrier', 'id_carrier', 'carrier', 'id_carrier'],
+            ['cart_rule_combination', 'id_cart_rule_1', 'cart_rule', 'id_cart_rule'],
+            ['cart_rule_combination', 'id_cart_rule_2', 'cart_rule', 'id_cart_rule'],
+            ['cart_rule_country', 'id_cart_rule', 'cart_rule', 'id_cart_rule'],
+            ['cart_rule_country', 'id_country', 'country', 'id_country'],
+            ['cart_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'],
+            ['cart_rule_group', 'id_group', 'group', 'id_group'],
+            ['cart_rule_product_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'],
+            ['cart_rule_product_rule', 'id_product_rule_group', 'cart_rule_product_rule_group', 'id_product_rule_group'],
+            ['cart_rule_product_rule_value', 'id_product_rule', 'cart_rule_product_rule', 'id_product_rule'],
+            ['category_group', 'id_category', 'category', 'id_category'],
+            ['category_group', 'id_group', 'group', 'id_group'],
+            ['category_product', 'id_category', 'category', 'id_category'],
+            ['category_product', 'id_product', 'product', 'id_product'],
+            ['cms', 'id_cms_category', 'cms_category', 'id_cms_category'],
+            ['cms_block', 'id_cms_category', 'cms_category', 'id_cms_category', 'blockcms'],
+            ['cms_block_page', 'id_cms', 'cms', 'id_cms', 'blockcms'],
+            ['cms_block_page', 'id_cms_block', 'cms_block', 'id_cms_block', 'blockcms'],
+            ['connections', 'id_shop_group', 'shop_group', 'id_shop_group'],
+            ['connections', 'id_shop', 'shop', 'id_shop'],
+            ['connections_page', 'id_connections', 'connections', 'id_connections'],
+            ['connections_page', 'id_page', 'page', 'id_page'],
+            ['connections_source', 'id_connections', 'connections', 'id_connections'],
+            ['customer', 'id_shop_group', 'shop_group', 'id_shop_group'],
+            ['customer', 'id_shop', 'shop', 'id_shop'],
+            ['customer_group', 'id_group', 'group', 'id_group'],
+            ['customer_group', 'id_customer', 'customer', 'id_customer'],
+            ['customer_message', 'id_customer_thread', 'customer_thread', 'id_customer_thread'],
+            ['customer_thread', 'id_shop', 'shop', 'id_shop'],
+            ['customization', 'id_cart', 'cart', 'id_cart'],
+            ['customization_field', 'id_product', 'product', 'id_product'],
+            ['customized_data', 'id_customization', 'customization', 'id_customization'],
+            ['delivery', 'id_shop', 'shop', 'id_shop'],
+            ['delivery', 'id_shop_group', 'shop_group', 'id_shop_group'],
+            ['delivery', 'id_carrier', 'carrier', 'id_carrier'],
+            ['delivery', 'id_zone', 'zone', 'id_zone'],
+            ['editorial', 'id_shop', 'shop', 'id_shop', 'editorial'],
+            ['favorite_product', 'id_product', 'product', 'id_product', 'favoriteproducts'],
+            ['favorite_product', 'id_customer', 'customer', 'id_customer', 'favoriteproducts'],
+            ['favorite_product', 'id_shop', 'shop', 'id_shop', 'favoriteproducts'],
+            ['feature_product', 'id_feature', 'feature', 'id_feature'],
+            ['feature_product', 'id_product', 'product', 'id_product'],
+            ['feature_value', 'id_feature', 'feature', 'id_feature'],
+            ['group_reduction', 'id_group', 'group', 'id_group'],
+            ['group_reduction', 'id_category', 'category', 'id_category'],
+            ['homeslider', 'id_shop', 'shop', 'id_shop', 'homeslider'],
+            ['homeslider', 'id_homeslider_slides', 'homeslider_slides', 'id_homeslider_slides', 'homeslider'],
+            ['hook_module', 'id_hook', 'hook', 'id_hook'],
+            ['hook_module', 'id_module', 'module', 'id_module'],
+            ['hook_module_exceptions', 'id_hook', 'hook', 'id_hook'],
+            ['hook_module_exceptions', 'id_module', 'module', 'id_module'],
+            ['hook_module_exceptions', 'id_shop', 'shop', 'id_shop'],
+            ['image', 'id_product', 'product', 'id_product'],
+            ['message', 'id_cart', 'cart', 'id_cart'],
+            ['message_readed', 'id_message', 'message', 'id_message'],
+            ['message_readed', 'id_employee', 'employee', 'id_employee'],
+            ['module_access', 'id_profile', 'profile', 'id_profile'],
+            ['module_country', 'id_module', 'module', 'id_module'],
+            ['module_country', 'id_country', 'country', 'id_country'],
+            ['module_country', 'id_shop', 'shop', 'id_shop'],
+            ['module_currency', 'id_module', 'module', 'id_module'],
+            ['module_currency', 'id_currency', 'currency', 'id_currency'],
+            ['module_currency', 'id_shop', 'shop', 'id_shop'],
+            ['module_group', 'id_module', 'module', 'id_module'],
+            ['module_group', 'id_group', 'group', 'id_group'],
+            ['module_group', 'id_shop', 'shop', 'id_shop'],
+            ['module_preference', 'id_employee', 'employee', 'id_employee'],
+            ['orders', 'id_shop', 'shop', 'id_shop'],
+            ['orders', 'id_shop_group', 'group_shop', 'id_shop_group'],
+            ['order_carrier', 'id_order', 'orders', 'id_order'],
+            ['order_cart_rule', 'id_order', 'orders', 'id_order'],
+            ['order_detail', 'id_order', 'orders', 'id_order'],
+            ['order_detail_tax', 'id_order_detail', 'order_detail', 'id_order_detail'],
+            ['order_history', 'id_order', 'orders', 'id_order'],
+            ['order_invoice', 'id_order', 'orders', 'id_order'],
+            ['order_invoice_payment', 'id_order', 'orders', 'id_order'],
+            ['order_invoice_tax', 'id_order_invoice', 'order_invoice', 'id_order_invoice'],
+            ['order_return', 'id_order', 'orders', 'id_order'],
+            ['order_return_detail', 'id_order_return', 'order_return', 'id_order_return'],
+            ['order_slip', 'id_order', 'orders', 'id_order'],
+            ['order_slip_detail', 'id_order_slip', 'order_slip', 'id_order_slip'],
+            ['pack', 'id_product_pack', 'product', 'id_product'],
+            ['pack', 'id_product_item', 'product', 'id_product'],
+            ['page', 'id_page_type', 'page_type', 'id_page_type'],
+            ['page_viewed', 'id_shop', 'shop', 'id_shop'],
+            ['page_viewed', 'id_shop_group', 'shop_group', 'id_shop_group'],
+            ['page_viewed', 'id_date_range', 'date_range', 'id_date_range'],
+            ['product_attachment', 'id_attachment', 'attachment', 'id_attachment'],
+            ['product_attachment', 'id_product', 'product', 'id_product'],
+            ['product_attribute', 'id_product', 'product', 'id_product'],
+            ['product_attribute_combination', 'id_product_attribute', 'product_attribute', 'id_product_attribute'],
+            ['product_attribute_combination', 'id_attribute', 'attribute', 'id_attribute'],
+            ['product_attribute_image', 'id_image', 'image', 'id_image'],
+            ['product_attribute_image', 'id_product_attribute', 'product_attribute', 'id_product_attribute'],
+            ['product_carrier', 'id_product', 'product', 'id_product'],
+            ['product_carrier', 'id_shop', 'shop', 'id_shop'],
+            ['product_carrier', 'id_carrier_reference', 'carrier', 'id_reference'],
+            ['product_country_tax', 'id_product', 'product', 'id_product'],
+            ['product_country_tax', 'id_country', 'country', 'id_country'],
+            ['product_country_tax', 'id_tax', 'tax', 'id_tax'],
+            ['product_download', 'id_product', 'product', 'id_product'],
+            ['product_group_reduction_cache', 'id_product', 'product', 'id_product'],
+            ['product_group_reduction_cache', 'id_group', 'group', 'id_group'],
+            ['product_sale', 'id_product', 'product', 'id_product'],
+            ['product_supplier', 'id_product', 'product', 'id_product'],
+            ['product_supplier', 'id_supplier', 'supplier', 'id_supplier'],
+            ['product_tag', 'id_product', 'product', 'id_product'],
+            ['product_tag', 'id_tag', 'tag', 'id_tag'],
+            ['range_price', 'id_carrier', 'carrier', 'id_carrier'],
+            ['range_weight', 'id_carrier', 'carrier', 'id_carrier'],
+            ['referrer_cache', 'id_referrer', 'referrer', 'id_referrer'],
+            ['referrer_cache', 'id_connections_source', 'connections_source', 'id_connections_source'],
+            ['search_index', 'id_product', 'product', 'id_product'],
+            ['search_word', 'id_lang', 'lang', 'id_lang'],
+            ['search_word', 'id_shop', 'shop', 'id_shop'],
+            ['shop_url', 'id_shop', 'shop', 'id_shop'],
+            ['specific_price_priority', 'id_product', 'product', 'id_product'],
+            ['stock', 'id_warehouse', 'warehouse', 'id_warehouse'],
+            ['stock', 'id_product', 'product', 'id_product'],
+            ['stock_available', 'id_product', 'product', 'id_product'],
+            ['stock_mvt', 'id_stock', 'stock', 'id_stock'],
+            ['tab_module_preference', 'id_employee', 'employee', 'id_employee'],
+            ['tab_module_preference', 'id_tab', 'tab', 'id_tab'],
+            ['tax_rule', 'id_country', 'country', 'id_country'],
+            ['warehouse_carrier', 'id_warehouse', 'warehouse', 'id_warehouse'],
+            ['warehouse_carrier', 'id_carrier', 'carrier', 'id_carrier'],
+            ['warehouse_product_location', 'id_product', 'product', 'id_product'],
+            ['warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse'],
+        ]);
     }
 
     public static function getCatalogRelatedTables()
     {
-        $append = array();
+        $append = [];
         if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
-            $append = array(
+            $append = [
                 'compare_product',
                 'scene_products',
                 'scene',
@@ -688,9 +688,9 @@ class PSCleaner extends Module
                 'scene_lang',
                 'scene_products',
                 'scene_shop',
-            );
+            ];
         }
-        return array_merge($append, array(
+        return array_merge($append, [
             'product',
             'product_shop',
             'feature_product',
@@ -762,12 +762,12 @@ class PSCleaner extends Module
             'stock_available',
             'stock_mvt',
             'warehouse',
-        ));
+        ]);
     }
 
     public static function getSalesRelatedTables()
     {
-        return array(
+        return [
             'customer',
             'cart',
             'cart_product',
@@ -802,6 +802,6 @@ class PSCleaner extends Module
             'page_viewed',
             'product_sale',
             'referrer_cache',
-        );
+        ];
     }
 }
