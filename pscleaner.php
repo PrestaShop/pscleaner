@@ -72,13 +72,13 @@ class PSCleaner extends Module
 
     public function getContent()
     {
-        $html = '<h2>'.$this->trans('Be really careful with this tool - There is no possible rollback!', array(), 'Modules.Pscleaner.Admin').'</h2>';
+        $html = '<h2>' . $this->trans('Be really careful with this tool - There is no possible rollback!', array(), 'Modules.Pscleaner.Admin') . '</h2>';
         if (Tools::isSubmit('submitCheckAndFix')) {
             $logs = self::checkAndFix();
             if (count($logs)) {
-                $conf = $this->trans('The following queries successfuly fixed broken data:', array(), 'Modules.Pscleaner.Admin').'<br /><ul>';
+                $conf = $this->trans('The following queries successfuly fixed broken data:', array(), 'Modules.Pscleaner.Admin') . '<br /><ul>';
                 foreach ($logs as $query => $entries) {
-                    $conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.$this->trans('%d line(s)', array($entries), 'Modules.Pscleaner.Admin').'</li>';
+                    $conf .= '<li>' . Tools::htmlentitiesUTF8($query) . '<br />' . $this->trans('%d line(s)', array($entries), 'Modules.Pscleaner.Admin') . '</li>';
                 }
                 $conf .= '</ul>';
             } else {
@@ -88,9 +88,9 @@ class PSCleaner extends Module
         } elseif (Tools::isSubmit('submitCleanAndOptimize')) {
             $logs = self::cleanAndOptimize();
             if (count($logs)) {
-                $conf = $this->trans('The following queries successfuly cleaned your database:', array(), 'Modules.Pscleaner.Admin').'<br /><ul>';
+                $conf = $this->trans('The following queries successfuly cleaned your database:', array(), 'Modules.Pscleaner.Admin') . '<br /><ul>';
                 foreach ($logs as $query => $entries) {
-                    $conf .= '<li>'.Tools::htmlentitiesUTF8($query).'<br />'.$this->trans('%d line(s)', array($entries), 'Modules.Pscleaner.Admin').'</li>';
+                    $conf .= '<li>' . Tools::htmlentitiesUTF8($query) . '<br />' . $this->trans('%d line(s)', array($entries), 'Modules.Pscleaner.Admin') . '</li>';
                 }
                 $conf .= '</ul>';
             } else {
@@ -111,27 +111,27 @@ class PSCleaner extends Module
 				$("#submitTruncateCatalog").click(function(){
 					if ($(\'#checkTruncateCatalog_on\').attr(\'checked\') != "checked")
 					{
-						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
+						alert(\'' . addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))) . '\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
+					if (confirm(\'' . addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))) . '\'))
 						return true;
 					return false;
 				});
 				$("#submitTruncateSales").click(function(){
 					if ($(\'#checkTruncateSales_on\').attr(\'checked\') != "checked")
 					{
-						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
+						alert(\'' . addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))) . '\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
+					if (confirm(\'' . addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))) . '\'))
 						return true;
 					return false;
 				});
 			});
 		</script>';
 
-        return $html.$this->renderForm();
+        return $html . $this->renderForm();
     }
 
     public static function checkAndFix()
@@ -141,11 +141,11 @@ class PSCleaner extends Module
 
         // Remove doubles in the configuration
         $filtered_configuration = array();
-        $result = $db->ExecuteS('SELECT * FROM '._DB_PREFIX_.'configuration');
+        $result = $db->ExecuteS('SELECT * FROM ' . _DB_PREFIX_ . 'configuration');
         foreach ($result as $row) {
-            $key = $row['id_shop_group'].'-|-'.$row['id_shop'].'-|-'.$row['name'];
+            $key = $row['id_shop_group'] . '-|-' . $row['id_shop'] . '-|-' . $row['name'];
             if (in_array($key, $filtered_configuration)) {
-                $query = 'DELETE FROM '._DB_PREFIX_.'configuration WHERE id_configuration = '.(int)$row['id_configuration'];
+                $query = 'DELETE FROM ' . _DB_PREFIX_ . 'configuration WHERE id_configuration = ' . (int)$row['id_configuration'];
                 $db->Execute($query);
                 $logs[$query] = 1;
             } else {
@@ -155,9 +155,9 @@ class PSCleaner extends Module
         unset($filtered_configuration);
 
         // Remove inexisting or monolanguage configuration value from configuration_lang
-        $query = 'DELETE FROM `'._DB_PREFIX_.'configuration_lang`
-		WHERE `id_configuration` NOT IN (SELECT `id_configuration` FROM `'._DB_PREFIX_.'configuration`)
-		OR `id_configuration` IN (SELECT `id_configuration` FROM `'._DB_PREFIX_.'configuration` WHERE name IS NULL OR name = "")';
+        $query = 'DELETE FROM `' . _DB_PREFIX_ . 'configuration_lang`
+		WHERE `id_configuration` NOT IN (SELECT `id_configuration` FROM `' . _DB_PREFIX_ . 'configuration`)
+		OR `id_configuration` IN (SELECT `id_configuration` FROM `' . _DB_PREFIX_ . 'configuration` WHERE name IS NULL OR name = "")';
         if ($db->Execute($query)) {
             if ($affected_rows = $db->Affected_Rows()) {
                 $logs[$query] = $affected_rows;
@@ -174,7 +174,7 @@ class PSCleaner extends Module
                 continue;
             }
 
-            $query = 'DELETE FROM `'._DB_PREFIX_.$query_array[0].'` WHERE `'.$query_array[1].'` NOT IN (SELECT `'.$query_array[3].'` FROM `'._DB_PREFIX_.$query_array[2].'`)';
+            $query = 'DELETE FROM `' . _DB_PREFIX_ . $query_array[0] . '` WHERE `' . $query_array[1] . '` NOT IN (SELECT `' . $query_array[3] . '` FROM `' . _DB_PREFIX_ . $query_array[2] . '`)';
             if ($db->Execute($query)) {
                 if ($affected_rows = $db->Affected_Rows()) {
                     $logs[$query] = $affected_rows;
@@ -183,20 +183,20 @@ class PSCleaner extends Module
         }
 
         // _lang table cleaning
-        $tables = Db::getInstance()->executeS('SHOW TABLES LIKE "'.preg_replace('/([%_])/', '\\$1', _DB_PREFIX_).'%_\\_lang"');
+        $tables = Db::getInstance()->executeS('SHOW TABLES LIKE "' . preg_replace('/([%_])/', '\\$1', _DB_PREFIX_) . '%_\\_lang"');
         foreach ($tables as $table) {
             $table_lang = current($table);
             $table = str_replace('_lang', '', $table_lang);
-            $id_table = 'id_'.preg_replace('/^'._DB_PREFIX_.'/', '', $table);
+            $id_table = 'id_' . preg_replace('/^' . _DB_PREFIX_ . '/', '', $table);
 
-            $query = 'DELETE FROM `'.bqSQL($table_lang).'` WHERE `'.bqSQL($id_table).'` NOT IN (SELECT `'.bqSQL($id_table).'` FROM `'.bqSQL($table).'`)';
+            $query = 'DELETE FROM `' . bqSQL($table_lang) . '` WHERE `' . bqSQL($id_table) . '` NOT IN (SELECT `' . bqSQL($id_table) . '` FROM `' . bqSQL($table) . '`)';
             if ($db->Execute($query)) {
                 if ($affected_rows = $db->Affected_Rows()) {
                     $logs[$query] = $affected_rows;
                 }
             }
 
-            $query = 'DELETE FROM `'.bqSQL($table_lang).'` WHERE `id_lang` NOT IN (SELECT `id_lang` FROM `'._DB_PREFIX_.'lang`)';
+            $query = 'DELETE FROM `' . bqSQL($table_lang) . '` WHERE `id_lang` NOT IN (SELECT `id_lang` FROM `' . _DB_PREFIX_ . 'lang`)';
             if ($db->Execute($query)) {
                 if ($affected_rows = $db->Affected_Rows()) {
                     $logs[$query] = $affected_rows;
@@ -205,24 +205,24 @@ class PSCleaner extends Module
         }
 
         // _shop table cleaning
-        $tables = Db::getInstance()->executeS('SHOW TABLES LIKE "'.preg_replace('/([%_])/', '\\$1', _DB_PREFIX_).'%_\\_shop"');
+        $tables = Db::getInstance()->executeS('SHOW TABLES LIKE "' . preg_replace('/([%_])/', '\\$1', _DB_PREFIX_) . '%_\\_shop"');
         foreach ($tables as $table) {
             $table_shop = current($table);
             $table = str_replace('_shop', '', $table_shop);
-            $id_table = 'id_'.preg_replace('/^'._DB_PREFIX_.'/', '', $table);
+            $id_table = 'id_' . preg_replace('/^' . _DB_PREFIX_ . '/', '', $table);
 
-            if (in_array($table_shop, array(_DB_PREFIX_.'carrier_tax_rules_group_shop'))) {
+            if (in_array($table_shop, array(_DB_PREFIX_ . 'carrier_tax_rules_group_shop'))) {
                 continue;
             }
 
-            $query = 'DELETE FROM `'.bqSQL($table_shop).'` WHERE `'.bqSQL($id_table).'` NOT IN (SELECT `'.bqSQL($id_table).'` FROM `'.bqSQL($table).'`)';
+            $query = 'DELETE FROM `' . bqSQL($table_shop) . '` WHERE `' . bqSQL($id_table) . '` NOT IN (SELECT `' . bqSQL($id_table) . '` FROM `' . bqSQL($table) . '`)';
             if ($db->Execute($query)) {
                 if ($affected_rows = $db->Affected_Rows()) {
                     $logs[$query] = $affected_rows;
                 }
             }
 
-            $query = 'DELETE FROM `'.bqSQL($table_shop).'` WHERE `id_shop` NOT IN (SELECT `id_shop` FROM `'._DB_PREFIX_.'shop`)';
+            $query = 'DELETE FROM `' . bqSQL($table_shop) . '` WHERE `id_shop` NOT IN (SELECT `id_shop` FROM `' . _DB_PREFIX_ . 'shop`)';
             if ($db->Execute($query)) {
                 if ($affected_rows = $db->Affected_Rows()) {
                     $logs[$query] = $affected_rows;
@@ -231,7 +231,7 @@ class PSCleaner extends Module
         }
 
         // stock_available
-        $query = 'DELETE FROM `'._DB_PREFIX_.'stock_available` WHERE `id_shop` NOT IN (SELECT `id_shop` FROM `'._DB_PREFIX_.'shop`) AND `id_shop_group` NOT IN (SELECT `id_shop_group` FROM `'._DB_PREFIX_.'shop_group`)';
+        $query = 'DELETE FROM `' . _DB_PREFIX_ . 'stock_available` WHERE `id_shop` NOT IN (SELECT `id_shop` FROM `' . _DB_PREFIX_ . 'shop`) AND `id_shop_group` NOT IN (SELECT `id_shop_group` FROM `' . _DB_PREFIX_ . 'shop_group`)';
         if ($db->Execute($query)) {
             if ($affected_rows = $db->Affected_Rows()) {
                 $logs[$query] = $affected_rows;
@@ -256,19 +256,19 @@ class PSCleaner extends Module
             case 'catalog':
                 $id_home = $this->getMultiShopValues('PS_HOME_CATEGORY');
                 $id_root = $this->getMultiShopValues('PS_ROOT_CATEGORY');
-                $db->execute('DELETE FROM `'._DB_PREFIX_.'category` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
-                $db->execute('DELETE FROM `'._DB_PREFIX_.'category_lang` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
-                $db->execute('DELETE FROM `'._DB_PREFIX_.'category_shop` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
+                $db->execute('DELETE FROM `' . _DB_PREFIX_ . 'category` WHERE id_category NOT IN (' . implode(',', array_map('intval', $id_home)) . ', ' . implode(',', array_map('intval', $id_root)) . ')');
+                $db->execute('DELETE FROM `' . _DB_PREFIX_ . 'category_lang` WHERE id_category NOT IN (' . implode(',', array_map('intval', $id_home)) . ', ' . implode(',', array_map('intval', $id_root)) . ')');
+                $db->execute('DELETE FROM `' . _DB_PREFIX_ . 'category_shop` WHERE id_category NOT IN (' . implode(',', array_map('intval', $id_home)) . ', ' . implode(',', array_map('intval', $id_root)) . ')');
                 foreach (scandir(_PS_CAT_IMG_DIR_) as $dir) {
                     if (preg_match('/^[0-9]+(\-(.*))?\.jpg$/', $dir)) {
-                        unlink(_PS_CAT_IMG_DIR_.$dir);
+                        unlink(_PS_CAT_IMG_DIR_ . $dir);
                     }
                 }
                 $tables = self::getCatalogRelatedTables();
                 foreach ($tables as $table) {
-                    $db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
+                    $db->execute('TRUNCATE TABLE `' . _DB_PREFIX_ . bqSQL($table) . '`');
                 }
-                $db->execute('DELETE FROM `'._DB_PREFIX_.'address` WHERE id_manufacturer > 0 OR id_supplier > 0 OR id_warehouse > 0');
+                $db->execute('DELETE FROM `' . _DB_PREFIX_ . 'address` WHERE id_manufacturer > 0 OR id_supplier > 0 OR id_warehouse > 0');
 
                 Image::deleteAllImages(_PS_PROD_IMG_DIR_);
                 if (!file_exists(_PS_PROD_IMG_DIR_)) {
@@ -276,12 +276,12 @@ class PSCleaner extends Module
                 }
                 foreach (scandir(_PS_MANU_IMG_DIR_) as $dir) {
                     if (preg_match('/^[0-9]+(\-(.*))?\.jpg$/', $dir)) {
-                        unlink(_PS_MANU_IMG_DIR_.$dir);
+                        unlink(_PS_MANU_IMG_DIR_ . $dir);
                     }
                 }
                 foreach (scandir(_PS_SUPP_IMG_DIR_) as $dir) {
                     if (preg_match('/^[0-9]+(\-(.*))?\.jpg$/', $dir)) {
-                        unlink(_PS_SUPP_IMG_DIR_.$dir);
+                        unlink(_PS_SUPP_IMG_DIR_ . $dir);
                     }
                 }
                 break;
@@ -302,10 +302,10 @@ class PSCleaner extends Module
                 }
 
                 foreach ($tables as $table) {
-                    $db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
+                    $db->execute('TRUNCATE TABLE `' . _DB_PREFIX_ . bqSQL($table) . '`');
                 }
-                $db->execute('DELETE FROM `'._DB_PREFIX_.'address` WHERE id_customer > 0');
-                $db->execute('UPDATE `'._DB_PREFIX_.'employee` SET `id_last_order` = 0,`id_last_customer_message` = 0,`id_last_customer` = 0');
+                $db->execute('DELETE FROM `' . _DB_PREFIX_ . 'address` WHERE id_customer > 0');
+                $db->execute('UPDATE `' . _DB_PREFIX_ . 'employee` SET `id_last_order` = 0,`id_last_customer_message` = 0,`id_last_customer` = 0');
 
                 break;
         }
@@ -318,9 +318,9 @@ class PSCleaner extends Module
         $logs = array();
 
         $query = '
-		DELETE FROM `'._DB_PREFIX_.'cart`
-		WHERE id_cart NOT IN (SELECT id_cart FROM `'._DB_PREFIX_.'orders`)
-		AND date_add < "'.pSQL(date('Y-m-d', strtotime('-1 month'))).'"';
+		DELETE FROM `' . _DB_PREFIX_ . 'cart`
+		WHERE id_cart NOT IN (SELECT id_cart FROM `' . _DB_PREFIX_ . 'orders`)
+		AND date_add < "' . pSQL(date('Y-m-d', strtotime('-1 month'))) . '"';
         if (Db::getInstance()->Execute($query)) {
             if ($affected_rows = Db::getInstance()->Affected_Rows()) {
                 $logs[$query] = $affected_rows;
@@ -328,25 +328,25 @@ class PSCleaner extends Module
         }
 
         $query = '
-		DELETE FROM `'._DB_PREFIX_.'cart_rule`
+		DELETE FROM `' . _DB_PREFIX_ . 'cart_rule`
 		WHERE (
 			active = 0
 			OR quantity = 0
-			OR date_to < "'.pSQL(date('Y-m-d')).'"
+			OR date_to < "' . pSQL(date('Y-m-d')) . '"
 		)
-		AND date_add < "'.pSQL(date('Y-m-d', strtotime('-1 month'))).'"';
+		AND date_add < "' . pSQL(date('Y-m-d', strtotime('-1 month'))) . '"';
         if (Db::getInstance()->Execute($query)) {
             if ($affected_rows = Db::getInstance()->Affected_Rows()) {
                 $logs[$query] = $affected_rows;
             }
         }
 
-        $parents = Db::getInstance()->ExecuteS('SELECT DISTINCT id_parent FROM '._DB_PREFIX_.'tab');
+        $parents = Db::getInstance()->ExecuteS('SELECT DISTINCT id_parent FROM ' . _DB_PREFIX_ . 'tab');
         foreach ($parents as $parent) {
-            $children = Db::getInstance()->ExecuteS('SELECT id_tab FROM '._DB_PREFIX_.'tab WHERE id_parent = '.(int)$parent['id_parent'].' ORDER BY IF(class_name IN ("AdminHome", "AdminDashboard"), 1, 2), position ASC');
+            $children = Db::getInstance()->ExecuteS('SELECT id_tab FROM ' . _DB_PREFIX_ . 'tab WHERE id_parent = ' . (int)$parent['id_parent'] . ' ORDER BY IF(class_name IN ("AdminHome", "AdminDashboard"), 1, 2), position ASC');
             $i = 1;
             foreach ($children as $child) {
-                $query = 'UPDATE '._DB_PREFIX_.'tab SET position = '.(int)($i++).' WHERE id_tab = '.(int)$child['id_tab'].' AND id_parent = '.(int)$parent['id_parent'];
+                $query = 'UPDATE ' . _DB_PREFIX_ . 'tab SET position = ' . (int)($i++) . ' WHERE id_tab = ' . (int)$child['id_tab'] . ' AND id_parent = ' . (int)$parent['id_parent'];
                 if (Db::getInstance()->Execute($query)) {
                     if ($affected_rows = Db::getInstance()->Affected_Rows()) {
                         $logs[$query] = $affected_rows;
@@ -380,9 +380,9 @@ class PSCleaner extends Module
 
     protected static function clearAllCaches()
     {
-        $index = file_exists(_PS_TMP_IMG_DIR_.'index.php') ? file_get_contents(_PS_TMP_IMG_DIR_.'index.php') : '';
+        $index = file_exists(_PS_TMP_IMG_DIR_ . 'index.php') ? file_get_contents(_PS_TMP_IMG_DIR_ . 'index.php') : '';
         Tools::deleteDirectory(_PS_TMP_IMG_DIR_, false);
-        file_put_contents(_PS_TMP_IMG_DIR_.'index.php', $index);
+        file_put_contents(_PS_TMP_IMG_DIR_ . 'index.php', $index);
         Context::getContext()->smarty->clearAllCache();
     }
 
@@ -496,7 +496,7 @@ class PSCleaner extends Module
         $helper->id = (int)Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
-        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFieldsValues(),
