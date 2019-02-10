@@ -292,7 +292,7 @@ class PSCleaner extends Module
                 $modules_tables = array(
                     'sekeywords' => array('sekeyword'),
                     'pagesnotfound' => array('pagenotfound'),
-                    'paypal' => array('paypal_customer', 'paypal_order')
+                    'paypal' => array('paypal_customer', 'paypal_order'),
                 );
 
                 foreach ($modules_tables as $name => $module_tables) {
@@ -392,7 +392,7 @@ class PSCleaner extends Module
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Catalog', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'input' => array(
                     array(
@@ -404,30 +404,30 @@ class PSCleaner extends Module
                             array(
                                 'id' => 'checkTruncateCatalog_on',
                                 'value' => 1,
-                                'label' => $this->trans('Enabled', array(), 'Admin.Global')
+                                'label' => $this->trans('Enabled', array(), 'Admin.Global'),
                             ),
                             array(
                                 'id' => 'checkTruncateCatalog_off',
                                 'value' => 0,
-                                'label' => $this->trans('Disabled', array(), 'Admin.Global')
-                            )
-                        )
-                    )
+                                'label' => $this->trans('Disabled', array(), 'Admin.Global'),
+                            ),
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->trans('Delete catalog', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitTruncateCatalog',
                     'id' => 'submitTruncateCatalog',
-                )
-            )
+                ),
+            ),
         );
 
         $fields_form_2 = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Orders and customers', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'input' => array(
                     array(
@@ -439,50 +439,50 @@ class PSCleaner extends Module
                             array(
                                 'id' => 'checkTruncateSales_on',
                                 'value' => 1,
-                                'label' => $this->trans('Enabled', array(), 'Admin.Global')
+                                'label' => $this->trans('Enabled', array(), 'Admin.Global'),
                             ),
                             array(
                                 'id' => 'checkTruncateSales_off',
                                 'value' => 0,
-                                'label' => $this->trans('Disabled', array(), 'Admin.Global')
-                            )
-                        )
-                    )
+                                'label' => $this->trans('Disabled', array(), 'Admin.Global'),
+                            ),
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->trans('Delete orders & customers', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitTruncateSales',
                     'id' => 'submitTruncateSales',
-                )
-            )
+                ),
+            ),
         );
 
         $fields_form_3 = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Functional integrity constraints', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'submit' => array(
                     'title' => $this->trans('Check & fix', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitCheckAndFix',
-                )
-            )
+                ),
+            ),
         );
         $fields_form_4 = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Database cleaning', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'submit' => array(
                     'title' => $this->trans('Clean & Optimize', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitCleanAndOptimize',
-                )
-            )
+                ),
+            ),
         );
 
         $helper = new HelperForm();
@@ -501,7 +501,7 @@ class PSCleaner extends Module
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
+            'id_language' => $this->context->language->id,
         );
 
         return $helper->generateForm(array($fields_form_1, $fields_form_2, $fields_form_3, $fields_form_4));
