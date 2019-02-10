@@ -693,6 +693,7 @@ class PSCleaner extends Module
         return array_merge($append, array(
             'product',
             'product_shop',
+            'category_group',
             'feature_product',
             'product_lang',
             'category_product',
