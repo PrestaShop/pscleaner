@@ -48,13 +48,13 @@ class PSCleaner extends Module
         $this->displayName = $this->trans('PrestaShop Cleaner', array(), 'Modules.Pscleaner.Admin');
         $this->description = $this->trans('Check and fix functional integrity constraints and remove default data', array(), 'Modules.Pscleaner.Admin');
         $this->secure_key = Tools::encrypt($this->name);
-	    
-	$this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
+
+        $this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
     }
 
     protected function getMultiShopValues($key)
     {
-        if (version_compare(_PS_VERSION_, '1.6.0.3', '>=') === true) {
+        if (true === version_compare(_PS_VERSION_, '1.6.0.3', '>=')) {
             return Configuration::getMultiShopValues($key);
         } else {
             $shops = Shop::getShops(false, null, true);
@@ -101,7 +101,7 @@ class PSCleaner extends Module
             self::truncate('catalog');
             $html .= $this->displayConfirmation($this->trans('Catalog truncated', array(), 'Modules.Pscleaner.Admin'));
         } elseif (Tools::getValue('submitTruncateSales') && Tools::getValue('checkTruncateSales')) {
-            self::truncate('sales');
+            self::truncate('sales', Tools::getValue('keepAutoinc', true));
             $html .= $this->displayConfirmation($this->trans('Orders and customers truncated', array(), 'Modules.Pscleaner.Admin'));
         }
 
@@ -145,7 +145,7 @@ class PSCleaner extends Module
         foreach ($result as $row) {
             $key = $row['id_shop_group'].'-|-'.$row['id_shop'].'-|-'.$row['name'];
             if (in_array($key, $filtered_configuration)) {
-                $query = 'DELETE FROM '._DB_PREFIX_.'configuration WHERE id_configuration = '.(int)$row['id_configuration'];
+                $query = 'DELETE FROM '._DB_PREFIX_.'configuration WHERE id_configuration = '.(int) $row['id_configuration'];
                 $db->Execute($query);
                 $logs[$query] = 1;
             } else {
@@ -247,7 +247,7 @@ class PSCleaner extends Module
         return $logs;
     }
 
-    public function truncate($case)
+    public function truncate($case, $keep_autoinc = true)
     {
         $db = Db::getInstance();
         $db->execute('SET FOREIGN_KEY_CHECKS = 0;');
@@ -292,7 +292,7 @@ class PSCleaner extends Module
                 $modules_tables = array(
                     'sekeywords' => array('sekeyword'),
                     'pagesnotfound' => array('pagenotfound'),
-                    'paypal' => array('paypal_customer', 'paypal_order')
+                    'paypal' => array('paypal_customer', 'paypal_order'),
                 );
 
                 foreach ($modules_tables as $name => $module_tables) {
@@ -302,7 +302,18 @@ class PSCleaner extends Module
                 }
 
                 foreach ($tables as $table) {
+                    // store AUTOINC before TRUNCATE
+                    if ($keep_autoinc && ('orders' == $table || 'cart' == $table)) {
+                        $status = $db->executeS(
+                            sprintf("SHOW TABLE STATUS FROM `%s` LIKE '%s%s'", _DB_NAME_, _DB_PREFIX_, $table)
+                        );
+                        $autoinc = (int) $status[0]['Auto_increment'];
+                    }
                     $db->execute('TRUNCATE TABLE `'._DB_PREFIX_.bqSQL($table).'`');
+                    // restore AUTOINC after TRUNCATE
+                    if ($keep_autoinc && ('orders' == $table || 'cart' == $table)) {
+                        $db->query(sprintf('ALTER TABLE `%s%s` AUTO_INCREMENT=%d', _DB_PREFIX_, $table, $autoinc));
+                    }
                 }
                 $db->execute('DELETE FROM `'._DB_PREFIX_.'address` WHERE id_customer > 0');
                 $db->execute('UPDATE `'._DB_PREFIX_.'employee` SET `id_last_order` = 0,`id_last_customer_message` = 0,`id_last_customer` = 0');
@@ -343,10 +354,10 @@ class PSCleaner extends Module
 
         $parents = Db::getInstance()->ExecuteS('SELECT DISTINCT id_parent FROM '._DB_PREFIX_.'tab');
         foreach ($parents as $parent) {
-            $children = Db::getInstance()->ExecuteS('SELECT id_tab FROM '._DB_PREFIX_.'tab WHERE id_parent = '.(int)$parent['id_parent'].' ORDER BY IF(class_name IN ("AdminHome", "AdminDashboard"), 1, 2), position ASC');
+            $children = Db::getInstance()->ExecuteS('SELECT id_tab FROM '._DB_PREFIX_.'tab WHERE id_parent = '.(int) $parent['id_parent'].' ORDER BY IF(class_name IN ("AdminHome", "AdminDashboard"), 1, 2), position ASC');
             $i = 1;
             foreach ($children as $child) {
-                $query = 'UPDATE '._DB_PREFIX_.'tab SET position = '.(int)($i++).' WHERE id_tab = '.(int)$child['id_tab'].' AND id_parent = '.(int)$parent['id_parent'];
+                $query = 'UPDATE '._DB_PREFIX_.'tab SET position = '.(int) ($i++).' WHERE id_tab = '.(int) $child['id_tab'].' AND id_parent = '.(int) $parent['id_parent'];
                 if (Db::getInstance()->Execute($query)) {
                     if ($affected_rows = Db::getInstance()->Affected_Rows()) {
                         $logs[$query] = $affected_rows;
@@ -375,6 +386,7 @@ class PSCleaner extends Module
                 }
             }
         }
+
         return $array;
     }
 
@@ -392,7 +404,7 @@ class PSCleaner extends Module
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Catalog', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'input' => array(
                     array(
@@ -404,30 +416,30 @@ class PSCleaner extends Module
                             array(
                                 'id' => 'checkTruncateCatalog_on',
                                 'value' => 1,
-                                'label' => $this->trans('Enabled', array(), 'Admin.Global')
+                                'label' => $this->trans('Enabled', array(), 'Admin.Global'),
                             ),
                             array(
                                 'id' => 'checkTruncateCatalog_off',
                                 'value' => 0,
-                                'label' => $this->trans('Disabled', array(), 'Admin.Global')
-                            )
-                        )
-                    )
+                                'label' => $this->trans('Disabled', array(), 'Admin.Global'),
+                            ),
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->trans('Delete catalog', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitTruncateCatalog',
                     'id' => 'submitTruncateCatalog',
-                )
-            )
+                ),
+            ),
         );
 
         $fields_form_2 = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Orders and customers', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'input' => array(
                     array(
@@ -439,61 +451,77 @@ class PSCleaner extends Module
                             array(
                                 'id' => 'checkTruncateSales_on',
                                 'value' => 1,
-                                'label' => $this->trans('Enabled', array(), 'Admin.Global')
+                                'label' => $this->trans('Enabled', array(), 'Admin.Global'),
                             ),
                             array(
                                 'id' => 'checkTruncateSales_off',
                                 'value' => 0,
-                                'label' => $this->trans('Disabled', array(), 'Admin.Global')
-                            )
-                        )
-                    )
+                                'label' => $this->trans('Disabled', array(), 'Admin.Global'),
+                            ),
+                        ),
+                    ),
                 ),
                 'submit' => array(
                     'title' => $this->trans('Delete orders & customers', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitTruncateSales',
                     'id' => 'submitTruncateSales',
-                )
-            )
+                ),
+            ),
+            array(
+                'type' => 'checkbox',
+                'name' => 'keepAutoinc',
+                'values' => array(
+                    'query' => array(
+                        array(
+                            'id' => 'on',
+                            'name' => $this->l('Keep the AUTO_INCREMENT value of the "orders" and "cart" tables.'),
+                            'val' => '1',
+                        ),
+                    ),
+                    'id' => 'id',
+                    'name' => 'name',
+                ),
+            ),
         );
 
         $fields_form_3 = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Functional integrity constraints', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'submit' => array(
                     'title' => $this->trans('Check & fix', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitCheckAndFix',
-                )
-            )
+                ),
+            ),
         );
+
         $fields_form_4 = array(
             'form' => array(
                 'legend' => array(
                     'title' => $this->trans('Database cleaning', array(), 'Modules.Pscleaner.Admin'),
-                    'icon' => 'icon-cogs'
+                    'icon' => 'icon-cogs',
                 ),
                 'submit' => array(
                     'title' => $this->trans('Clean & Optimize', array(), 'Modules.Pscleaner.Admin'),
                     'class' => 'btn btn-default pull-right',
                     'name' => 'submitCleanAndOptimize',
-                )
-            )
+                ),
+            ),
         );
 
         $helper = new HelperForm();
         $helper->module = $this;
         $helper->show_toolbar = false;
-        $helper->table =  $this->table;
-        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+        $helper->table = $this->table;
+        $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
         $this->fields_form = array();
-        $helper->id = (int)Tools::getValue('id_carrier');
+        $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
@@ -501,7 +529,7 @@ class PSCleaner extends Module
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFieldsValues(),
             'languages' => $this->context->controller->getLanguages(),
-            'id_language' => $this->context->language->id
+            'id_language' => $this->context->language->id,
         );
 
         return $helper->generateForm(array($fields_form_1, $fields_form_2, $fields_form_3, $fields_form_4));
@@ -528,9 +556,9 @@ class PSCleaner extends Module
                 array('scene_products', 'id_product', 'product', 'id_product'),
                 array('theme_specific', 'id_theme', 'theme', 'id_theme'),
                 array('theme_specific', 'id_shop', 'shop', 'id_shop'),
-
             );
         }
+
         return array_merge($append, array(
             // 0 => DELETE FROM __table__, 1 => WHERE __id__ NOT IN, 2 => NOT IN __table__, 3 => __id__ used in the "NOT IN" table, 4 => module_name
             array('access', 'id_profile', 'profile', 'id_profile'),
@@ -690,6 +718,7 @@ class PSCleaner extends Module
                 'scene_shop',
             );
         }
+
         return array_merge($append, array(
             'product',
             'product_shop',
