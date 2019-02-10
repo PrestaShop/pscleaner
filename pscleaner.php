@@ -289,11 +289,7 @@ class PSCleaner extends Module
             case 'sales':
                 $tables = self::getSalesRelatedTables();
 
-                $modules_tables = array(
-                    'sekeywords' => array('sekeyword'),
-                    'pagesnotfound' => array('pagenotfound'),
-                    'paypal' => array('paypal_customer', 'paypal_order')
-                );
+                $modules_tables = Hook::exec('actionPSCleanerGetModulesTables', array('truncate' => 'sales'), null, true);
 
                 foreach ($modules_tables as $name => $module_tables) {
                     if (Module::isInstalled($name)) {
