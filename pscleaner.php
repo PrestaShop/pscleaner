@@ -375,6 +375,7 @@ class PSCleaner extends Module
                 }
             }
         }
+
         return $array;
     }
 
@@ -528,9 +529,9 @@ class PSCleaner extends Module
                 array('scene_products', 'id_product', 'product', 'id_product'),
                 array('theme_specific', 'id_theme', 'theme', 'id_theme'),
                 array('theme_specific', 'id_shop', 'shop', 'id_shop'),
-
             );
         }
+
         return array_merge($append, array(
             // 0 => DELETE FROM __table__, 1 => WHERE __id__ NOT IN, 2 => NOT IN __table__, 3 => __id__ used in the "NOT IN" table, 4 => module_name
             array('access', 'id_profile', 'profile', 'id_profile'),
@@ -692,6 +693,7 @@ class PSCleaner extends Module
                 'scene_shop',
             );
         }
+
         return array_merge($append, array(
             'product',
             'product_shop',
