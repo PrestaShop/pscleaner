@@ -51,7 +51,7 @@ class PSCleaner extends Module
 
     protected function getMultiShopValues($key)
     {
-            return Configuration::getMultiShopValues($key);
+        return Configuration::getMultiShopValues($key);
     }
 
     public function getContent()
