@@ -2,7 +2,7 @@
   "name": "prestashop/pscleaner",
   "description": "PrestaShop module pscleaner",
   "homepage": "https://github.com/PrestaShop/pscleaner",
-  "license": "AFL - Academic Free License (AFL 3.0)",
+  "license": "AFL-3.0",
   "authors": [
     {
       "name": "PrestaShop SA",
@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "php": ">=5.3.2"
+    "php": ">=5.6"
   },
   "config": {
     "preferred-install": "dist"
