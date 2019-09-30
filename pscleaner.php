@@ -643,18 +643,7 @@ class PSCleaner extends Module
             array('warehouse_carrier', 'id_warehouse', 'warehouse', 'id_warehouse'),
             array('warehouse_carrier', 'id_carrier', 'carrier', 'id_carrier'),
             array('warehouse_product_location', 'id_product', 'product', 'id_product'),
-            array('warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse'),
-            array('access', 'id_tab', 'tab', 'id_tab'),
-            array('compare_product', 'id_compare', 'compare', 'id_compare'),
-            array('compare_product', 'id_product', 'product', 'id_product'),
-            array('compare', 'id_customer', 'customer', 'id_customer'),
-            array('module_access', 'id_module', 'module', 'id_module'),
-            array('scene_category', 'id_scene', 'scene', 'id_scene'),
-            array('scene_category', 'id_category', 'category', 'id_category'),
-            array('scene_products', 'id_scene', 'scene', 'id_scene'),
-            array('scene_products', 'id_product', 'product', 'id_product'),
-            array('theme_specific', 'id_theme', 'theme', 'id_theme'),
-            array('theme_specific', 'id_shop', 'shop', 'id_shop'),
+            array('warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse')
         );
     }
 
@@ -733,14 +722,7 @@ class PSCleaner extends Module
             'stock',
             'stock_available',
             'stock_mvt',
-            'warehouse',
-            'compare_product',
-            'scene_products',
-            'scene',
-            'scene_category',
-            'scene_lang',
-            'scene_products',
-            'scene_shop',
+            'warehouse'
         );
     }
 
