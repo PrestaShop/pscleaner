@@ -678,7 +678,6 @@ class PSCleaner extends Module
             'customization',
             'customization_field',
             'supply_order_detail',
-            'attribute_impact',
             'product_attribute',
             'product_attribute_shop',
             'product_attribute_combination',
