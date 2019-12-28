@@ -289,6 +289,10 @@ class PSCleaner extends Module
             case 'sales':
                 $tables = self::getSalesRelatedTables();
 
+                // psloginregphone
+                if (Module::isInstalled('psloginregphone'))
+                    array_push($tables, 'psloginregphone');
+
                 $modules_tables = array(
                     'sekeywords' => array('sekeyword'),
                     'pagesnotfound' => array('pagenotfound'),
