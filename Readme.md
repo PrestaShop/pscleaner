@@ -7,7 +7,7 @@ Check and fix functional integrity constraints and remove default data
 ## Multistore compatibility
 
 This module is not compatible with the multistore :x: <br/>
-It can't be configured differently from one store to another.<br/>
+It means that its configuration applies for all stores.<br/>
 
 ## Contributing
 
