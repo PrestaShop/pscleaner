@@ -4,6 +4,11 @@
 
 Check and fix functional integrity constraints and remove default data
 
+## Multistore compatibility
+
+This module is not compatible with the multistore :x: <br/>
+It means that its configuration applies for all stores.<br/>
+
 ## Contributing
 
 PrestaShop modules are open-source extensions to the PrestaShop e-commerce solution. Everyone is welcome and even encouraged to contribute with their own improvements.
