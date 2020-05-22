@@ -728,6 +728,7 @@ class PSCleaner extends Module
             'customer_message_sync_imap',
             'customer_thread',
             'guest',
+            'mail',
             'message',
             'message_readed',
             'orders',
