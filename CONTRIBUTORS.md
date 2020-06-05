@@ -1,0 +1,23 @@
+GitHub contributors:
+--------------------------------
+ - AntoineMille
+ - Damien Metzger
+ - Francois Gaillard
+ - Gregory Roussac
+ - Jerome Nadaud
+ - Jérôme Nadaud
+ - Maxime Biloé
+ - PrestaEdit
+ - Quetzacoalt91
+ - SebBareyre
+ - Shudrum
+ - aleeks
+ - antoin-m
+ - eternoendless
+ - gaillafr
+ - great9
+ - maximebiloe
+ - michalurva
+ - prestamodule
+ - tchauviere
+ - xBorderie
