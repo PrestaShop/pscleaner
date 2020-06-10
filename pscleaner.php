@@ -92,24 +92,18 @@ class PSCleaner extends Module
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$("#submitTruncateCatalog").click(function(){
-					if ($(\'#checkTruncateCatalog_on\').attr(\'checked\') != "checked")
-					{
+					if (!$(\'#checkTruncateCatalog_on\').is(\':checked\')) {
 						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
-						return true;
-					return false;
+					return window.confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))).'\');
 				});
 				$("#submitTruncateSales").click(function(){
-					if ($(\'#checkTruncateSales_on\').attr(\'checked\') != "checked")
-					{
+					if (!$(\'#checkTruncateSales_on\').is(\':checked\')) {
 						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
-						return true;
-					return false;
+					return window.confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))).'\');
 				});
 			});
 		</script>';
