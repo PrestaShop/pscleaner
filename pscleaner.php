@@ -1,13 +1,13 @@
 <?php
-/*
- * 2007-2016 PrestaShop
+/**
+ * 2007-2020 PrestaShop.
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License (AFL 3.0)
+ * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/afl-3.0.php
+ * https://opensource.org/licenses/AFL-3.0
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
  * to license@prestashop.com so we can send you a copy immediately.
@@ -18,11 +18,10 @@
  * versions in the future. If you wish to customize PrestaShop for your
  * needs please refer to http://www.prestashop.com for more information.
  *
- *  @author PrestaShop SA <contact@prestashop.com>
- *  @copyright  2007-2016 PrestaShop SA
- *  @version  Release: $Revision: 7060 $
- *  @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
- *  International Registered Trademark & Property of PrestaShop SA
+ * @author    PrestaShop SA <contact@prestashop.com>
+ * @copyright 2007-2020 PrestaShop SA
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License 3.0 (AFL-3.0)
+ * International Registered Trademark & Property of PrestaShop SA
  */
 
 if (!defined('_CAN_LOAD_FILES_')) {
@@ -35,12 +34,10 @@ class PSCleaner extends Module
     {
         $this->name = 'pscleaner';
         $this->tab = 'administration';
-        $this->version = '2.0.0';
+        $this->version = '2.1.0';
         $this->author = 'PrestaShop';
         $this->need_instance = 0;
-        if (version_compare(_PS_VERSION_, '1.5.0.0 ', '>=')) {
-            $this->multishop_context = Shop::CONTEXT_ALL;
-        }
+        $this->multishop_context = Shop::CONTEXT_ALL;
 
         $this->bootstrap = true;
         parent::__construct();
@@ -48,26 +45,12 @@ class PSCleaner extends Module
         $this->displayName = $this->trans('PrestaShop Cleaner', array(), 'Modules.Pscleaner.Admin');
         $this->description = $this->trans('Check and fix functional integrity constraints and remove default data', array(), 'Modules.Pscleaner.Admin');
         $this->secure_key = Tools::encrypt($this->name);
-	    
-	$this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.7.1.0', 'max' => _PS_VERSION_);
     }
 
     protected function getMultiShopValues($key)
     {
-        if (version_compare(_PS_VERSION_, '1.6.0.3', '>=') === true) {
-            return Configuration::getMultiShopValues($key);
-        } else {
-            $shops = Shop::getShops(false, null, true);
-            $id_lang = (int) $this->context->language->id;
-            $results = array();
-            array_push($results, Configuration::get($key));
-
-            foreach ($shops as $id_shop) {
-                array_push($results, Configuration::get($key, $id_lang, null, $id_shop));
-            }
-
-            return $results;
-        }
+        return Configuration::getMultiShopValues($key);
     }
 
     public function getContent()
@@ -109,24 +92,18 @@ class PSCleaner extends Module
 		<script type="text/javascript">
 			$(document).ready(function(){
 				$("#submitTruncateCatalog").click(function(){
-					if ($(\'#checkTruncateCatalog_on\').attr(\'checked\') != "checked")
-					{
+					if (!$(\'#checkTruncateCatalog_on\').is(\':checked\')) {
 						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
-						return true;
-					return false;
+					return window.confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all catalog data?', array(), 'Modules.Pscleaner.Admin'))).'\');
 				});
 				$("#submitTruncateSales").click(function(){
-					if ($(\'#checkTruncateSales_on\').attr(\'checked\') != "checked")
-					{
+					if (!$(\'#checkTruncateSales_on\').is(\':checked\')) {
 						alert(\''.addslashes(html_entity_decode($this->trans('Please read the disclaimer and click "Yes" above', array(), 'Modules.Pscleaner.Admin'))).'\');
 						return false;
 					}
-					if (confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))).'\'))
-						return true;
-					return false;
+					return window.confirm(\''.addslashes(html_entity_decode($this->trans('Are you sure that you want to delete all sales data?', array(), 'Modules.Pscleaner.Admin'))).'\');
 				});
 			});
 		</script>';
@@ -145,7 +122,7 @@ class PSCleaner extends Module
         foreach ($result as $row) {
             $key = $row['id_shop_group'].'-|-'.$row['id_shop'].'-|-'.$row['name'];
             if (in_array($key, $filtered_configuration)) {
-                $query = 'DELETE FROM '._DB_PREFIX_.'configuration WHERE id_configuration = '.(int)$row['id_configuration'];
+                $query = 'DELETE FROM '._DB_PREFIX_.'configuration WHERE id_configuration = '.(int) $row['id_configuration'];
                 $db->Execute($query);
                 $logs[$query] = 1;
             } else {
@@ -259,6 +236,8 @@ class PSCleaner extends Module
                 $db->execute('DELETE FROM `'._DB_PREFIX_.'category` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
                 $db->execute('DELETE FROM `'._DB_PREFIX_.'category_lang` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
                 $db->execute('DELETE FROM `'._DB_PREFIX_.'category_shop` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
+                $db->execute('DELETE FROM `'._DB_PREFIX_.'category_group` WHERE id_category NOT IN ('.implode(',', array_map('intval', $id_home)).', '.implode(',', array_map('intval', $id_root)).')');
+                $db->execute('ALTER TABLE `'._DB_PREFIX_.'category` AUTO_INCREMENT = '. (1 + max(array_merge($id_home, $id_root))));
                 foreach (scandir(_PS_CAT_IMG_DIR_) as $dir) {
                     if (preg_match('/^[0-9]+(\-(.*))?\.jpg$/', $dir)) {
                         unlink(_PS_CAT_IMG_DIR_.$dir);
@@ -343,10 +322,10 @@ class PSCleaner extends Module
 
         $parents = Db::getInstance()->ExecuteS('SELECT DISTINCT id_parent FROM '._DB_PREFIX_.'tab');
         foreach ($parents as $parent) {
-            $children = Db::getInstance()->ExecuteS('SELECT id_tab FROM '._DB_PREFIX_.'tab WHERE id_parent = '.(int)$parent['id_parent'].' ORDER BY IF(class_name IN ("AdminHome", "AdminDashboard"), 1, 2), position ASC');
+            $children = Db::getInstance()->ExecuteS('SELECT id_tab FROM '._DB_PREFIX_.'tab WHERE id_parent = '.(int) $parent['id_parent'].' ORDER BY IF(class_name IN ("AdminHome", "AdminDashboard"), 1, 2), position ASC');
             $i = 1;
             foreach ($children as $child) {
-                $query = 'UPDATE '._DB_PREFIX_.'tab SET position = '.(int)($i++).' WHERE id_tab = '.(int)$child['id_tab'].' AND id_parent = '.(int)$parent['id_parent'];
+                $query = 'UPDATE '._DB_PREFIX_.'tab SET position = '.(int) ($i++).' WHERE id_tab = '.(int) $child['id_tab'].' AND id_parent = '.(int) $parent['id_parent'];
                 if (Db::getInstance()->Execute($query)) {
                     if ($affected_rows = Db::getInstance()->Affected_Rows()) {
                         $logs[$query] = $affected_rows;
@@ -375,6 +354,7 @@ class PSCleaner extends Module
                 }
             }
         }
+
         return $array;
     }
 
@@ -489,11 +469,11 @@ class PSCleaner extends Module
         $helper->module = $this;
         $helper->show_toolbar = false;
         $helper->table =  $this->table;
-        $lang = new Language((int)Configuration::get('PS_LANG_DEFAULT'));
+        $lang = new Language((int) Configuration::get('PS_LANG_DEFAULT'));
         $helper->default_form_language = $lang->id;
         $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') ? Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG') : 0;
         $this->fields_form = array();
-        $helper->id = (int)Tools::getValue('id_carrier');
+        $helper->id = (int) Tools::getValue('id_carrier');
         $helper->identifier = $this->identifier;
         $helper->submit_action = 'btnSubmit';
         $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false).'&configure='.$this->name.'&tab_module='.$this->tab.'&module_name='.$this->name;
@@ -514,24 +494,8 @@ class PSCleaner extends Module
 
     public static function getCheckAndFixQueries()
     {
-        $append = array();
-        if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
-            $append = array(
-                array('access', 'id_tab', 'tab', 'id_tab'),
-                array('compare_product', 'id_compare', 'compare', 'id_compare'),
-                array('compare_product', 'id_product', 'product', 'id_product'),
-                array('compare', 'id_customer', 'customer', 'id_customer'),
-                array('module_access', 'id_module', 'module', 'id_module'),
-                array('scene_category', 'id_scene', 'scene', 'id_scene'),
-                array('scene_category', 'id_category', 'category', 'id_category'),
-                array('scene_products', 'id_scene', 'scene', 'id_scene'),
-                array('scene_products', 'id_product', 'product', 'id_product'),
-                array('theme_specific', 'id_theme', 'theme', 'id_theme'),
-                array('theme_specific', 'id_shop', 'shop', 'id_shop'),
 
-            );
-        }
-        return array_merge($append, array(
+        return array(
             // 0 => DELETE FROM __table__, 1 => WHERE __id__ NOT IN, 2 => NOT IN __table__, 3 => __id__ used in the "NOT IN" table, 4 => module_name
             array('access', 'id_profile', 'profile', 'id_profile'),
             array('accessory', 'id_product_1', 'product', 'id_product'),
@@ -552,6 +516,8 @@ class PSCleaner extends Module
             array('cart_rule_country', 'id_country', 'country', 'id_country'),
             array('cart_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
             array('cart_rule_group', 'id_group', 'group', 'id_group'),
+            array('cart_rule_lang', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
+            array('cart_rule_lang', 'id_lang', 'lang', 'id_lang'),
             array('cart_rule_product_rule_group', 'id_cart_rule', 'cart_rule', 'id_cart_rule'),
             array('cart_rule_product_rule', 'id_product_rule_group', 'cart_rule_product_rule_group', 'id_product_rule_group'),
             array('cart_rule_product_rule_value', 'id_product_rule', 'cart_rule_product_rule', 'id_product_rule'),
@@ -672,28 +638,16 @@ class PSCleaner extends Module
             array('warehouse_carrier', 'id_warehouse', 'warehouse', 'id_warehouse'),
             array('warehouse_carrier', 'id_carrier', 'carrier', 'id_carrier'),
             array('warehouse_product_location', 'id_product', 'product', 'id_product'),
-            array('warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse'),
-        ));
+            array('warehouse_product_location', 'id_warehouse', 'warehouse', 'id_warehouse')
+        );
     }
 
     public static function getCatalogRelatedTables()
     {
-        $append = array();
-        if (version_compare('1.7.0.0', _PS_VERSION_, '>')) {
-            $append = array(
-                'compare_product',
-                'scene_products',
-                'scene',
-                'scene_category',
-                'scene_lang',
-                'scene_products',
-                'scene_shop',
-            );
-        }
-        return array_merge($append, array(
+
+        return array(
             'product',
             'product_shop',
-            'feature_product',
             'product_lang',
             'category_product',
             'product_tag',
@@ -701,8 +655,6 @@ class PSCleaner extends Module
             'image',
             'image_lang',
             'image_shop',
-            'specific_price',
-            'specific_price_priority',
             'product_carrier',
             'cart_product',
             'product_attachment',
@@ -712,17 +664,8 @@ class PSCleaner extends Module
             'product_sale',
             'product_supplier',
             'warehouse_product_location',
-            'stock',
-            'stock_available',
-            'stock_mvt',
-            'customization',
-            'customization_field',
             'supply_order_detail',
-            'attribute_impact',
-            'product_attribute',
-            'product_attribute_shop',
-            'product_attribute_combination',
-            'product_attribute_image',
+            'attribute',
             'attribute_impact',
             'attribute_lang',
             'attribute_group',
@@ -733,7 +676,6 @@ class PSCleaner extends Module
             'product_attribute_shop',
             'product_attribute_combination',
             'product_attribute_image',
-            'stock_available',
             'manufacturer',
             'manufacturer_lang',
             'manufacturer_shop',
@@ -761,8 +703,8 @@ class PSCleaner extends Module
             'stock',
             'stock_available',
             'stock_mvt',
-            'warehouse',
-        ));
+            'warehouse'
+        );
     }
 
     public static function getSalesRelatedTables()
@@ -779,6 +721,7 @@ class PSCleaner extends Module
             'customer_message_sync_imap',
             'customer_thread',
             'guest',
+            'mail',
             'message',
             'message_readed',
             'orders',
