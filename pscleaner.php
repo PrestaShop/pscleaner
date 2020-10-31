@@ -305,7 +305,18 @@ class PSCleaner extends Module
                 $logs[$query] = $affected_rows;
             }
         }
-
+	    
+        // This leaves a lot of ps_guests without a matching ps_cart, so we remove them
+        $query = '        
+		DELETE g FROM `'._DB_PREFIX_.'guest` as g
+		LEFT JOIN `'._DB_PREFIX_.'cart` as c ON g.id_guest = c.id_guest
+		WHERE id_cart IS NULL';
+        if (Db::getInstance()->Execute($query)) {
+            if ($affected_rows = Db::getInstance()->Affected_Rows()) {
+                $logs[$query] = $affected_rows;
+            }
+        }
+	    	    
         $query = '
 		DELETE FROM `'._DB_PREFIX_.'cart_rule`
 		WHERE (
