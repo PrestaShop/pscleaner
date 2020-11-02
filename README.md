@@ -2,7 +2,7 @@
 
 ## About
 
-Check and fix functional integrity constraints and remove default data
+PrestaShop helps you remove your catalog, orders and customers data in one go.
 
 ## Multistore compatibility
 
