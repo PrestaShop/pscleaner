@@ -695,6 +695,7 @@ class PSCleaner extends Module
             'pack',
             'search_index',
             'search_word',
+            'alias',
             'specific_price',
             'specific_price_priority',
             'specific_price_rule',
