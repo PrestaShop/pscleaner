@@ -11,7 +11,9 @@ It means that its configuration applies for all stores.<br/>
 
 ## Contributing
 
-PrestaShop modules are open-source extensions to the PrestaShop e-commerce solution. Everyone is welcome and even encouraged to contribute with their own improvements.
+PrestaShop modules are open source extensions to the [PrestaShop e-commerce platform][prestashop]. Everyone is welcome and even encouraged to contribute with their own improvements!
+
+Just make sure to follow our [contribution guidelines][contribution-guidelines].
 
 ### Requirements
 
