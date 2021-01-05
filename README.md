@@ -19,6 +19,10 @@ PrestaShop modules are open source extensions to the [PrestaShop e-commerce plat
 
 Just make sure to follow our [contribution guidelines][contribution-guidelines].
 
+## License
+
+This module is released under the [Academic Free License 3.0][AFL-3.0] 
+
 [report-issue]: https://github.com/PrestaShop/PrestaShop/issues/new/choose
 [prestashop]: https://www.prestashop.com/
 [contribution-guidelines]: https://devdocs.prestashop.com/1.7/contribute/contribution-guidelines/project-modules/
