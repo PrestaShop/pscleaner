@@ -2,7 +2,7 @@
 
 ## About
 
-PrestaShop helps you remove your catalog, orders and customers data in one go.
+PrestaShop Cleaner helps you remove your catalog, orders and customers data in one go.
 
 ## Multistore compatibility
 
