@@ -1,5 +1,7 @@
 # PrestaShop Cleaner
 
+**This module has been archived, it’s no longer maintained but you still can fork it if you need it for your shop.**
+
 ## About
 
 PrestaShop helps you remove your catalog, orders and customers data in one go.
